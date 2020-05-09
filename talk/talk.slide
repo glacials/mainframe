@@ -1,0 +1,153 @@
+# Introduction to Go
+May 2020
+Tags: go
+Summary: An introduction to the Go programming language.
+
+Ben Carlsson
+Senior Software Engineer, YourBase
+ben@twos.dev
+twos.dev
+@glcls
+
+## Go is simple, reliable, and complete
+Go has first class support for:
+
+- Testing
+- Benchmarking
+- Code generation
+- Documentation
+- Dependency management
+- Installing Go programs
+- Linting & style
+
+: It takes all these things seriously, but addresses them all simply.
+: To contain all these things, we have...
+
+##
+	$ go help
+	Usage:
+
+		go <command> [arguments]
+
+	The commands are:
+
+		bug         start a bug report
+		build       compile packages and dependencies
+		clean       remove object files and cached files
+		doc         show documentation for package or symbol
+		env         print Go environment information
+		fix         update packages to use new APIs
+		fmt         gofmt (reformat) package sources
+		generate    generate Go files by processing source
+		get         download and install packages and dependencies
+		install     compile and install packages and dependencies
+		list        list packages or modules
+		mod         module maintenance
+		run         compile and run Go program
+		test        test packages
+		tool        run specified go tool
+		version     print Go version
+		vet         report likely mistakes in packages
+
+
+: ./...
+
+##
+	$ go help
+	Usage:
+
+		go <command> [arguments]
+
+	The commands are:
+
+		build       compile packages and dependencies
+		fmt         gofmt (reformat) package sources
+		get         download and install packages and dependencies
+		install     compile and install packages and dependencies
+		run         compile and run Go program
+		test        test packages
+
+
+: ./...
+
+## Writing Go
+Go is simple.
+
+.play -edit hello_world.go
+
+.play -edit build_hello_world.sh
+
+: main() is the entrypoiont to your program.
+: Generally once it compiles, it works.
+
+## Packages
+Packages are directories, and they matter.
+
+Go is in charge of where your programs are on your filesystem, not you.
+
+	~/
+	  go/  # $GOPATH
+	    bin/
+	    pkg/
+	    src/
+	      github.com/
+	        glacials/
+	          mainframe/
+	            talk/
+	      golang.org/
+	        x/
+	          tools/
+	            playground/
+	              socket/
+	            present/
+
+	// main.go
+	import "golang.org/x/tools/playground/socket"
+
+: Mention $GOPATH.
+: Packages can have subpackages.
+: Importing a package imports all files in it. Files are arbitrary division lines to help YOU.
+: This tool (`present`) itself imports golang.org/x/tools/playground/socket
+
+## Return values
+	// types.go
+
+.play -edit types.go
+
+: Types come after the variable name in declarations.
+: Go is a strongly, statically typed language.
+: Mention io.Copy, io.Reader, io.Writer WITHOUT saying their names, to lead into interfaces.
+
+## type
+
+.play -edit type.go
+
+## struct
+
+.play -edit struct.go
+
+## Functions on structs
+
+.play -edit functions_on_structs.go
+
+## Interfaces
+
+.play -edit interface.go /type/,
+
+: An interface is a type, just like string or int or struct.
+: It is a collection of functions just like other languages.
+: However unlike other languages, you can never declare a type as implementing an interface.
+: If a type fulfills the criteria of the interface (has the right function signatures), it
+: automatically fulfills the interface, no keywork required.
+: You may find yourself implementing interfaces by accident, and that's okay.
+:
+: In the last example we implemented an interface called Stringer.
+: But we didn't have to type the word Stringer anywhere, or even know that it exists.
+
+: Down in register, p is a Person, not a personImpl.
+
+## Other resources
+Idiomatic Go: https://golang.org/doc/effective_go.html
+A Tour of Go: https://tour.golang.org/list
+
+Googling for "<thing> go" not working? Try "<thing> golang".
