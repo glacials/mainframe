@@ -1,4 +1,4 @@
-# Building Web Services with Go
+# Web Services with Go
 May 2020
 Tags: go
 Summary: An introduction to using the Go programming language to build web services.
@@ -9,11 +9,18 @@ ben@twos.dev
 twos.dev
 @glcls
 
-## Hello, world!
-.play -edit handler/main.go
+## Handler basics
+.code -edit handler/main.go
+
+	go run handler/main.go
+	curl -i localhost:8080
 
 : main() is the entrypoiont to your program.
 : Generally once it compiles, it works.
+
+## gRPC Really Quickly
+.code grpc/service.proto
+
 
 ## Go is simple, reliable, and complete
 Go has first class support for:
@@ -43,6 +50,7 @@ Go has first class support for:
 		generate    generate Go files by processing source
 		get         download and install packages and dependencies
 		install     compile and install packages and dependencies
+		mod         module maintenance
 		run         compile and run Go program
 		test        test packages
 		...
@@ -50,23 +58,35 @@ Go has first class support for:
 
 : ./...
 
+## Testing
+.code -edit testing/person.go /\/\//,
+.code -edit testing/person_test.go /\/\//,
+	go test ./...
+
 ## go fmt
 	vim gofmt/main.go
 
-## Packages
-Packages are directories, and they matter.
+## Exporting
+.code -edit exporting/person.go
 
-Go is in charge of where your programs are on your filesystem, not you.
+: aka public vs private
+: bring up zero-values here wrt admin
+
+## go doc
+Run:
+
+	godoc
+	vim doc/person.go
+
+Open:
+
+.link http://localhost:6060/pkg/github.com/glacials/mainframe/talks/everyday-go/v4/doc/ localhost:6060
+
+## Packages and directories
 
 	~/
 	  go/  # $GOPATH
-	    bin/
-	    pkg/
 	    src/
-	      github.com/
-	        glacials/
-	          mainframe/
-	            talk/
 	      golang.org/
 	        x/
 	          tools/
@@ -83,9 +103,10 @@ Go is in charge of where your programs are on your filesystem, not you.
 : This tool (`present`) itself imports golang.org/x/tools/playground/socket
 
 ## Return values
-	// types.go
+.play -edit return/main.go
 
-.play -edit types.go
+.link https://pkg.go.dev/os?tab=doc#Open os.Open
+.link https://pkg.go.dev/io?tab=doc#Reader io.Reader
 
 : Types come after the variable name in declarations.
 : Go is a strongly, statically typed language.
@@ -95,32 +116,44 @@ Go is in charge of where your programs are on your filesystem, not you.
 
 .play -edit type.go
 
+: Untyped string constant
+
 ## struct
 
 .play -edit struct.go
 
-## Functions on structs
+## Interface patterns
 
-.play -edit functions_on_structs.go
-
-## Interfaces
-
-.play -edit interface.go /type/,
+.play -edit interface/main.go /\/\//,
+.play -edit interface/user/user.go /\/\//,
 
 : An interface is a type, just like string or int or struct.
-: It is a collection of functions just like other languages.
-: However unlike other languages, you can never declare a type as implementing an interface.
-: If a type fulfills the criteria of the interface (has the right function signatures), it
-: automatically fulfills the interface, no keywork required.
-: You may find yourself implementing interfaces by accident, and that's okay.
 :
-: In the last example we implemented an interface called Stringer.
-: But we didn't have to type the word Stringer anywhere, or even know that it exists.
+: Stringer
 
-: Down in register, p is a Person, not a personImpl.
+: Accept interfaces, return structs.
+: Why? Godocs are easier
+:   and your struct can accidentally implement interfaces (GOOD THING)
+:   and it's an unneeded abstraction
+: This is uniquely possible with implicit interfaces.
+
+## Context
+
+.play -edit context/main.go
+
+## Goroutines
+
+.play -edit goroutine/main.go /\/\//,
+
+: Mention waitgroups,
+: sync package is great,
+: locks and mutexes and stuff.
 
 ## Other resources
-Idiomatic Go: https://golang.org/doc/effective_go.html
-A Tour of Go: https://tour.golang.org/list
+.link https://golang.org/doc/effective_go.html Effective Go
+.link https://tour.golang.org/list A Tour of Go
 
-Googling for "<thing> go" not working? Try "<thing> golang".
+- Googling for "<thing> go" not working? Try "<thing> golang".
+- Super interesting parts about Go:
+  - Channels
+- defer
