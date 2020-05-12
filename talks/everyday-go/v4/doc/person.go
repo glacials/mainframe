@@ -9,7 +9,7 @@ type person struct {
 	admin     bool
 }
 
-// New creates a new person with the given first and last names.
+// New creates a new person and returns it.
 func New(firstName, lastName string) person {
 	return person{
 		firstName: firstName,

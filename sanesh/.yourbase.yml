@@ -1,0 +1,248 @@
+dependencies:
+  build:
+    - go:1.12.1
+
+build_targets:
+  - name: default
+    commands:
+      - go get ./...
+      - go test ./...
+  - name: aixppc64
+  - environment:
+    - GOOS=aix
+    - GOARCH=ppc64
+  - commands:
+    - go build -o bin
+  - name: android386
+  - environment:
+    - GOOS=android
+    - GOARCH=386
+  - commands:
+    - go build -o bin
+  - name: androidamd64
+  - environment:
+    - GOOS=android
+    - GOARCH=amd64
+  - commands:
+    - go build -o bin
+  - name: androidarm
+  - environment:
+    - GOOS=android
+    - GOARCH=arm
+  - commands:
+    - go build -o bin
+  - name: androidarm64
+  - environment:
+    - GOOS=android
+    - GOARCH=arm64
+  - commands:
+    - go build -o bin
+  - name: darwin386
+  - environment:
+    - GOOS=darwin
+    - GOARCH=386
+  - commands:
+    - go build -o bin
+  - name: darwinamd64
+  - environment:
+    - GOOS=darwin
+    - GOARCH=amd64
+  - commands:
+    - go build -o bin
+  - name: darwinarm
+  - environment:
+    - GOOS=darwin
+    - GOARCH=arm
+  - commands:
+    - go build -o bin
+  - name: darwinarm64
+  - environment:
+    - GOOS=darwin
+    - GOARCH=arm64
+  - commands:
+    - go build -o bin
+  - name: dragonflyamd64
+  - environment:
+    - GOOS=dragonfly
+    - GOARCH=amd64
+  - commands:
+    - go build -o bin
+  - name: freebsd386
+  - environment:
+    - GOOS=freebsd
+    - GOARCH=386
+  - commands:
+    - go build -o bin
+  - name: freebsdamd64
+  - environment:
+    - GOOS=freebsd
+    - GOARCH=amd64
+  - commands:
+    - go build -o bin
+  - name: freebsdarm
+  - environment:
+    - GOOS=freebsd
+    - GOARCH=arm
+  - commands:
+    - go build -o bin
+  - name: illumosamd64
+  - environment:
+    - GOOS=illumos
+    - GOARCH=amd64
+  - commands:
+    - go build -o bin
+  - name: jswasm
+  - environment:
+    - GOOS=js
+    - GOARCH=wasm
+  - commands:
+    - go build -o bin
+  - name: linux386
+  - environment:
+    - GOOS=linux
+    - GOARCH=386
+  - commands:
+    - go build -o bin
+  - name: linuxamd64
+  - environment:
+    - GOOS=linux
+    - GOARCH=amd64
+  - commands:
+    - go build -o bin
+  - name: linuxarm
+  - environment:
+    - GOOS=linux
+    - GOARCH=arm
+  - commands:
+    - go build -o bin
+  - name: linuxarm64
+  - environment:
+    - GOOS=linux
+    - GOARCH=arm64
+  - commands:
+    - go build -o bin
+  - name: linuxppc64
+  - environment:
+    - GOOS=linux
+    - GOARCH=ppc64
+  - commands:
+    - go build -o bin
+  - name: linuxppc64le
+  - environment:
+    - GOOS=linux
+    - GOARCH=ppc64le
+  - commands:
+    - go build -o bin
+  - name: linuxmips
+  - environment:
+    - GOOS=linux
+    - GOARCH=mips
+  - commands:
+    - go build -o bin
+  - name: linuxmipsle
+  - environment:
+    - GOOS=linux
+    - GOARCH=mipsle
+  - commands:
+    - go build -o bin
+  - name: linuxmips64
+  - environment:
+    - GOOS=linux
+    - GOARCH=mips64
+  - commands:
+    - go build -o bin
+  - name: linuxmips64le
+  - environment:
+    - GOOS=linux
+    - GOARCH=mips64le
+  - commands:
+    - go build -o bin
+  - name: linuxs390x
+  - environment:
+    - GOOS=linux
+    - GOARCH=s390x
+  - commands:
+    - go build -o bin
+  - name: netbsd386
+  - environment:
+    - GOOS=netbsd
+    - GOARCH=386
+  - commands:
+    - go build -o bin
+  - name: netbsdamd64
+  - environment:
+    - GOOS=netbsd
+    - GOARCH=amd64
+  - commands:
+    - go build -o bin
+  - name: netbsdarm
+  - environment:
+    - GOOS=netbsd
+    - GOARCH=arm
+  - commands:
+    - go build -o bin
+  - name: openbsd386
+  - environment:
+    - GOOS=openbsd
+    - GOARCH=386
+  - commands:
+    - go build -o bin
+  - name: openbsdamd64
+  - environment:
+    - GOOS=openbsd
+    - GOARCH=amd64
+  - commands:
+    - go build -o bin
+  - name: openbsdarm
+  - environment:
+    - GOOS=openbsd
+    - GOARCH=arm
+  - commands:
+    - go build -o bin
+  - name: openbsdarm64
+  - environment:
+    - GOOS=openbsd
+    - GOARCH=arm64
+  - commands:
+    - go build -o bin
+  - name: plan9386
+  - environment:
+    - GOOS=plan9
+    - GOARCH=386
+  - commands:
+    - go build -o bin
+  - name: plan9amd64
+  - environment:
+    - GOOS=plan9
+    - GOARCH=amd64
+  - commands:
+    - go build -o bin
+  - name: plan9arm
+  - environment:
+    - GOOS=plan9
+    - GOARCH=arm
+  - commands:
+    - go build -o bin
+  - name: solarisamd64
+  - environment:
+    - GOOS=solaris
+    - GOARCH=amd64
+  - commands:
+    - go build -o bin
+  - name: windows386
+  - environment:
+    - GOOS=windows
+    - GOARCH=386
+  - commands:
+    - go build -o bin
+  - name: windowsamd64
+  - environment:
+    - GOOS=windows
+    - GOARCH=amd64
+  - commands:
+    - go build -o bin
+
+ci:
+  builds:
+    - name: default
+      build_target: default

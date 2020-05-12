@@ -76,11 +76,15 @@ Go has first class support for:
 Run:
 
 	godoc
-	vim doc/person.go
 
 Open:
 
 .link http://localhost:6060/pkg/github.com/glacials/mainframe/talks/everyday-go/v4/doc/ localhost:6060
+
+Run:
+
+	vim ~/go/src/github.com/glacials/mainframe/talks/everyday-go/v4/doc/person.go
+
 
 ## Packages and directories
 
@@ -111,6 +115,7 @@ Open:
 : Types come after the variable name in declarations.
 : Go is a strongly, statically typed language.
 : Mention io.Copy, io.Reader, io.Writer WITHOUT saying their names, to lead into interfaces.
+: io.Reader/Writer work on S3, files, network streams, stdout, etc.
 
 ## type
 
@@ -122,38 +127,51 @@ Open:
 
 .play -edit struct.go
 
+## Interfaces
+
 ## Interface patterns
+: TODO: Summer says this is confusing, first say why use them, THEN explain the details
 
 .play -edit interface/main.go /\/\//,
 .play -edit interface/user/user.go /\/\//,
 
+: Run main.go, not user.go :P
 : An interface is a type, just like string or int or struct.
 :
 : Stringer
 
 : Accept interfaces, return structs.
-: Why? Godocs are easier
-:   and your struct can accidentally implement interfaces (GOOD THING)
-:   and it's an unneeded abstraction
+: Why?
+: 1. Godocs are easier
+: 2. Your struct can accidentally implement interfaces
+: 3. It's an unneeded abstraction
 : This is uniquely possible with implicit interfaces.
 
 ## Context
+: TODO: Build out this slide
 
 .play -edit context/main.go
 
 ## Goroutines
 
-.play -edit goroutine/main.go /\/\//,
+.play -edit goroutine/main.go
 
-: Mention waitgroups,
-: sync package is great,
-: locks and mutexes and stuff.
+: Goroutines are cheap.
+: You can have hundreds of thousands on one box with no noticeable performance decrease.
+
+: Mention things built on top of them:
+: http.Handler,
+: sync
 
 ## Other resources
-.link https://golang.org/doc/effective_go.html Effective Go
+.link https://golang.org/doc golang.org/doc
 .link https://tour.golang.org/list A Tour of Go
+.link https://golang.org/doc/effective_go.html Effective Go
+- Googling for "&lt;thing&gt; go" not working? Try "&lt;thing&gt; golang".
+: - map[string]struct{}
+: - Generics
+: - iota
 
-- Googling for "<thing> go" not working? Try "<thing> golang".
-- Super interesting parts about Go:
-  - Channels
-- defer
+: Ship code faster with consistency across all teams.
+
+: A simplified build system and test accelerator for complex code bases.
