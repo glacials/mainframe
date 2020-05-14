@@ -6,14 +6,15 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	_ "github.com/glacials/mainframe/coldbrewcrew/iworkout"
 )
 
+const startMsg = "Starting mainframe..."
 const port = 9000
 const refreshInterval = 2 * time.Second
 
 func main() {
-	fmt.Println("Starting mainframe...")
-
 	var (
 		index []byte
 		err   error
@@ -25,6 +26,7 @@ func main() {
 				log.Fatalf("Cannot read html/index.html: %s", err)
 				return
 			}
+
 			time.Sleep(refreshInterval)
 		}
 	}()
@@ -33,6 +35,6 @@ func main() {
 		w.Write(index)
 	})
 
-	fmt.Println("Mainframe listening on port 8080...")
+	fmt.Printf("%s listening on %s:%d.\n", startMsg, "localhost", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }

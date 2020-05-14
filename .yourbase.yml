@@ -1,0 +1,13 @@
+dependencies:
+  build:
+    - go:1.14.2
+
+build_targets:
+  - name: default
+    commands:
+      - go run main.go
+
+ci:
+  builds:
+    - name: default
+      build_target: default
