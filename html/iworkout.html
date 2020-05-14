@@ -1,0 +1,109 @@
+<html>
+
+<head>
+    <title>twos.dev</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        table, tr, td {
+            border: 1px solid black;
+        }
+
+        h1 {
+            font-family: sans-serif;
+        }
+
+        h2 {
+            font-family: sans-serif;
+        }
+
+        pre {
+            overflow-x: auto;
+        }
+
+        blockquote {
+            margin: 10px;
+            border-left: 3px solid #eee;
+            padding-left: 15px;
+            color: #333;
+        }
+
+        @media screen and (min-width: 15cm) {
+            body {
+                max-width: 18cm;
+                padding-left: 8mm;
+                padding-right: 8mm;
+            }
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background-color: lightgray;
+            margin-top: 5mm;
+            margin-bottom: 8mm;
+        }
+
+        .entrylink {
+            display: block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .datelink {
+            padding-left: 1em;
+            color: blue;
+            font-style: italic;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .vote {
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <h1>#i-work-out standings</h1>
+
+        <p><em>2020-05</em></p>
+
+        <p><em>
+                Calculated from reaction emojis in Discord.
+            </em></p>
+
+        <table>
+            <tr>
+                <th>
+                    {{range .Users}}<td>{{.Username}}</td>{{end}}
+                </th>
+            </tr>
+            {{range $messageID, $userIDSet := .Reactions}}
+                {{if $userIDSet}}
+                    <tr>
+                        <td>{{(index $.Messages $messageID).Content}}</td>
+                        {{range $.Users}}
+                            <td>
+                                {{if (index $userIDSet .ID)}}
+                                    X
+                                {{end}}
+                            </td>
+                        {{end}}
+                    </tr>
+                {{end}}
+            {{end}}
+        </table>
+
+        <hr>
+
+        <div style="font-family: monospace;">
+            <a href="/">Index</a><br>
+            <a href="https://github.com/glacials">github.com/glacials</a><br>
+            <a href="https://twitter.com/glcls">twitter.com/glcls</a><br>
+            ben@twos.dev
+        </div>
+</body>
+
+</html>

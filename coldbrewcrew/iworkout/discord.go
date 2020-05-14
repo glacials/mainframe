@@ -17,18 +17,6 @@ const botToken = "NzA5Nzk3NTE4MDMyMjQwNzUx.XryNQQ.vx4n9mcdsJr8bFCz8pOgrr2YD0A"
 
 const iworkoutChannelID = "492391546411417620"
 
-// In-memory caches of data retrieved through the API.
-var (
-	// users is a map of user ID to user.
-	users = map[string]discordgo.User{}
-
-	// messages is a two-dimensional map of channel ID to message ID to message.
-	messages = map[string]map[string]discordgo.Message{}
-
-	// reactions is a map of message ID to a "set" of users who reacted to that message (with any reaction).
-	reactions = map[string]map[string]struct{}{}
-)
-
 // init is called automatically on boot.
 func init() {
 	discord, err := discordgo.New(fmt.Sprintf("Bot %s", botToken))
@@ -57,7 +45,7 @@ func handleReactionAdd(s *discordgo.Session, r *discordgo.MessageReactionAdd) {
 
 	reactions[m.ID][u.ID] = struct{}{}
 
-	fmt.Printf("%s reaction added: \"%s\" had a %s added by %v\n", logPrefix, m.Content, r.Emoji.Name, u)
+	fmt.Printf("%s reaction added: \"%s\" had a %s added by %v\n", logPrefix, m.Content, r.Emoji.Name, u.Username)
 }
 
 // handleReactionRemove is called by discordgo when an emoji reaction is removed from a message.
@@ -67,7 +55,7 @@ func handleReactionRemove(s *discordgo.Session, r *discordgo.MessageReactionRemo
 
 	delete(reactions[m.ID], u.ID)
 
-	fmt.Printf("%s reaction removed: \"%s\" had a %s removed by %v\n", logPrefix, m.Content, r.Emoji.Name, u)
+	fmt.Printf("%s reaction removed: \"%s\" had a %s removed by %v\n", logPrefix, m.Content, r.Emoji.Name, u.Username)
 }
 
 // fetchUser gets a user through the Discord API by ID and caches it, if it is not already stored in the local cache.
@@ -130,6 +118,7 @@ func buildMessagesState(s *discordgo.Session, channelID string) {
 			}
 
 			messages[msg.ChannelID][msg.ID] = *msg
+			users[msg.Author.ID] = *msg.Author
 
 			if earliest.ID == "" {
 				earliest = *msg
