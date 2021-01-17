@@ -11,7 +11,7 @@ import (
 
 var logger = log.New(os.Stderr, "[speedtest]", log.Ldate|log.Ltime)
 
-const interval = 10 * time.Second
+const interval = 24 * time.Hour
 
 // Monitor only terminates if it hits an error, so should be run in a goroutine.
 func Monitor(logger *log.Logger) error {
