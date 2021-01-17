@@ -6,6 +6,7 @@ package iworkout
 import (
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -14,12 +15,16 @@ import (
 
 const startMsg = "Starting Discord handlers..."
 const logPrefix = "Discord:"
-const botToken = "NzA5Nzk3NTE4MDMyMjQwNzUx.XryNQQ.vx4n9mcdsJr8bFCz8pOgrr2YD0A"
 
 const iworkoutChannelID = "492391546411417620"
 
 // init is called automatically on boot.
 func init() {
+	botToken, ok := os.LookupEnv("DISCORD_TOKEN")
+	if !ok {
+		panic("You must set DISCORD_TOKEN")
+	}
+
 	discord, err := discordgo.New(fmt.Sprintf("Bot %s", botToken))
 	if err != nil {
 		log.Fatalf("%s can't start: %s.\n", startMsg, err)
