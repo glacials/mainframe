@@ -6,6 +6,7 @@ package iworkout
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -42,6 +43,10 @@ func init() {
 func handleReactionAdd(s *discordgo.Session, r *discordgo.MessageReactionAdd) {
 	u := fetchUser(s, r.UserID)
 	m := fetchMessage(s, r.ChannelID, r.MessageID)
+
+	if _, ok := reactions[m.ID]; !ok {
+		reactions[m.ID] = map[string]struct{}{}
+	}
 
 	reactions[m.ID][u.ID] = struct{}{}
 
@@ -113,7 +118,7 @@ func buildMessagesState(s *discordgo.Session, channelID string) {
 		}
 
 		for _, msg := range m {
-			if messages[msg.ChannelID] == nil {
+			if _, ok := messages[msg.ChannelID]; !ok {
 				messages[msg.ChannelID] = map[string]discordgo.Message{}
 			}
 
@@ -164,12 +169,12 @@ func buildReactionsState(s *discordgo.Session) {
 				}
 
 				for _, user := range users {
-					if reactions[msg.ID] == nil {
+					if _, ok := reactions[msg.ID]; !ok {
 						reactions[msg.ID] = map[string]struct{}{}
 					}
 					reactions[msg.ID][user.ID] = struct{}{}
 				}
-				fmt.Printf("Catalogued %d reactions spanning %d emoji to %s by %s\n", len(users), len(msg.Reactions), msg.Content, msg.Author)
+				fmt.Printf("Catalogued %d reactions (%d emoji) to %s by %s\n", len(users), len(msg.Reactions), strings.Replace(msg.Content, "\n", " ", -1), msg.Author)
 			}
 		}
 	}
