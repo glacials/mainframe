@@ -18,4 +18,4 @@ jobs:
         goarch: ${{ matrix.goarch }}
         goos: ${{ matrix.goos }}
         goversion: "https://dl.google.com/go/go1.16beta1.linux-amd64.tar.gz"
-        ldflags: "-X main.version=`git describe --tags`"
+        ldflags: "-X main.version=`git describe --tags` -X selfupdate.version=`git describe --tags`"

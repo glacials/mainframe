@@ -12,18 +12,16 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/glacials/mainframe/coldbrewcrew/iworkout"
 	_ "github.com/glacials/mainframe/coldbrewcrew/iworkout"
-	"github.com/glacials/mainframe/speedtest"
-)
-
-var (
-	builtAt string = "development"
-	version string = "development"
+	"github.com/glacials/mainframe/cron"
 )
 
 const startMsg = "Starting mainframe..."
 const port = 9000
 
-var versionFlag = flag.Bool("version", false, "prints mainframe version")
+var (
+	version     string = "development"
+	versionFlag        = flag.Bool("version", false, "prints mainframe version")
+)
 
 //go:embed html
 var html embed.FS
@@ -81,11 +79,9 @@ func main() {
 		}
 	})
 
-	go func() {
-		if err := speedtest.Monitor(logger); err != nil {
-			log.Printf("speedtest failed: %v", err)
-		}
-	}()
+	if err := cron.Start(logger); err != nil {
+		log.Fatalf("%v", err)
+	}
 
 	log.Printf("%s listening on %s:%d.\n", startMsg, "localhost", port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))

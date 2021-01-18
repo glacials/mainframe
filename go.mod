@@ -11,6 +11,7 @@ require (
 	github.com/ddo/rq v0.0.0-20190828174524-b3daa55fcaba // indirect
 	github.com/google/uuid v1.1.5
 	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/robfig/cron v1.2.0
 	golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5 // indirect
 	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
 	golang.org/x/sys v0.0.0-20210113181707-4bcb84eeeb78 // indirect
