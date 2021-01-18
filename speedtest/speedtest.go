@@ -38,6 +38,6 @@ func Run(logger *log.Logger) error {
 	if i == 0 {
 		return fmt.Errorf("speedtest didn't get any kbps packets; starting over")
 	}
-	logger.Printf("Bandwidth: %d Mbps", int(kbpsSum)/i/1000)
+	logger.Printf("Finished: %.2f Mbps", kbpsSum/float64(i)/1000)
 	return nil
 }
