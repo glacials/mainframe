@@ -5,5 +5,6 @@ import (
 )
 
 func main() {
-	context.Value("user-id")
+	ctx := context.Background()
+	ctx.Value("user-id")
 }

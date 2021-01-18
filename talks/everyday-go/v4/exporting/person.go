@@ -20,4 +20,6 @@ func (p person) FullName() string {
 	return fmt.Sprintf("%s %s", p.firstName, p.lastName)
 }
 
-func (p person) destroy() { ... }
+func (p person) destroy() {
+	// ...
+}

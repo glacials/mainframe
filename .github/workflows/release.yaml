@@ -15,6 +15,7 @@ jobs:
     - uses: wangyoucao577/go-release-action@v1.13
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
+        goos: ${{ matrix.goos }}
         goversion: "https://dl.google.com/go/go1.16beta1.linux-amd64.tar.gz"
+        ldflags: "-X main.version=`git describe --tags` -X main.builtAt=$(date +'%Y-%m-%d_%T')"

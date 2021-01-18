@@ -18,8 +18,8 @@ const logPrefix = "Discord:"
 
 const iworkoutChannelID = "492391546411417620"
 
-// init is called automatically on boot.
-func init() {
+// Sync starts an infinite sync job with Discord.
+func Sync() {
 	botToken, ok := os.LookupEnv("DISCORD_TOKEN")
 	if !ok {
 		panic("You must set DISCORD_TOKEN")

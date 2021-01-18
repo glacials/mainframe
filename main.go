@@ -2,12 +2,12 @@ package main
 
 import (
 	"embed"
+	"flag"
 	"fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/glacials/mainframe/coldbrewcrew/iworkout"
@@ -15,9 +15,15 @@ import (
 	"github.com/glacials/mainframe/speedtest"
 )
 
+var (
+	builtAt string = "development"
+	version string = "development"
+)
+
 const startMsg = "Starting mainframe..."
 const port = 9000
-const refreshInterval = 1 * time.Second
+
+var versionFlag = flag.Bool("version", false, "prints mainframe version")
 
 //go:embed html
 var html embed.FS
@@ -37,6 +43,13 @@ type IworkoutParams struct {
 
 func main() {
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+
+	flag.Parse()
+
+	if *versionFlag {
+		fmt.Println(version)
+		return
+	}
 
 	templates := template.New("html")
 	templates = templates.Funcs(map[string]interface{}{
