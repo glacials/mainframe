@@ -12,8 +12,9 @@ import (
 var (
 	// Cron fields are, in order:
 	// second minute hour day-of-month month day-of-week
-	selfupdateInterval = "0 0 3 * * *" // Update myself at 3am every day
-	speedtestInterval  = "0 0 4 * * *" // Run a speed test at 4am every day
+	selfupdateInterval = "0 0 2 * * *" // Update myself at 3am every day
+	// 3am reserved for mainframe_helper.sh to boot me back up if I updated
+	speedtestInterval = "0 0 5 * * *" // Run a speed test at 4am every day
 
 	minutely = "@every 1m" // For use in development
 )
