@@ -14,6 +14,7 @@ var (
 	// second minute hour day-of-month month day-of-week
 	selfupdateInterval = "0 0 2 * * *" // Update myself at 3am every day
 	// 3am reserved for mainframe_helper.sh to boot me back up if I updated
+	dyndnsInterval    = "0 0 4 * * *" // Update DNS at 4am every day
 	speedtestInterval = "0 0 5 * * *" // Run a speed test at 4am every day
 
 	minutely = "@every 1m" // For use in development
@@ -47,6 +48,17 @@ func Start(logger *log.Logger, version string) error {
 		return fmt.Errorf("cannot start speedtest cron: %v", err)
 	}
 	logger.Println("Registered speedtest")
+
+	/* dyndns currently disabled
+	if err := c.AddFunc(dyndnsInterval, func() {
+		if err := dyndns.Run(logger); err != nil {
+			logger.Fatalf("dyndns failed: %v", err)
+		}
+	}); err != nil {
+		return fmt.Errorf("cannot start dyndns cron: %v", err)
+	}
+	logger.Println("Registered dyndns")
+	*/
 
 	logger.Println("All crons registered")
 	c.Start()
