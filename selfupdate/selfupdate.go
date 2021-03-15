@@ -1,19 +1,19 @@
 package selfupdate
 
 import (
+	"archive/tar"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 
 	"github.com/inconshreveable/go-update"
 )
 
 var (
-	versionURL  = url.URL{Scheme: "https", Host: "github.com", Path: "/glacials/mainframe/releases/latest"}
-	artifactURL = url.URL{Scheme: "https", Host: "github.com", Path: "/glacials/mainframe/releases/download/%s/%s"}
+	versionURL  = "https://github.com/glacials/mainframe/releases/latest"
+	artifactURL = "https://github.com/glacials/mainframe/releases/download/%s/%s"
 	tarfile     = "mainframe-%s-linux-arm.tar.gz"
 	version     = "development"
 )
@@ -38,14 +38,20 @@ func Run(logger *log.Logger, version string) error {
 
 	logger.Printf("Found %v, running %v; updating", latestVersion, version)
 
-	url := fmt.Sprintf(artifactURL.String(), latestVersion, fmt.Sprintf(tarfile, latestVersion))
+	url := fmt.Sprintf(artifactURL, latestVersion, fmt.Sprintf(tarfile, latestVersion))
 	resp, err := http.Get(url)
 	if err != nil {
 		return fmt.Errorf("can't fetch latest version from GitHub: %v", err)
 	}
 	defer resp.Body.Close()
 
-	if err := update.Apply(resp.Body, update.Options{}); err != nil {
+	if resp.StatusCode != 200 {
+		return fmt.Errorf("unexpected status code %d downloading artifact from %s", resp.StatusCode, url)
+	}
+
+	extracted := tar.NewReader(resp.Body)
+
+	if err := update.Apply(extracted, update.Options{}); err != nil {
 		return fmt.Errorf("can't update myself: %v", err)
 	}
 
@@ -60,7 +66,7 @@ func Run(logger *log.Logger, version string) error {
 func fetchLatestVersion(logger *log.Logger) (string, error) {
 	client := http.Client{}
 
-	req, err := http.NewRequest("GET", versionURL.String(), nil)
+	req, err := http.NewRequest("GET", versionURL, nil)
 	req.Header.Add("Accept", "application/json")
 
 	resp, err := client.Do(req)

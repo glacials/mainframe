@@ -19,14 +19,14 @@ var (
 func main() {
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lmsgprefix)
 
-	logger.Print("Booting mainframe")
-
 	flag.Parse()
 
 	if *versionFlag {
 		fmt.Println(version)
 		return
 	}
+
+	logger.Print("Booting mainframe")
 
 	go func() {
 		if err := web.Start(logger); err != nil {
