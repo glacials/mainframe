@@ -15,8 +15,6 @@ jobs:
         run: echo "APP_VERSION=$(git describe --tags)" >> $GITHUB_ENV
       - name: Build
         uses: wangyoucao577/go-release-action@v1.13
-        env:
-          GO111MODULE: auto
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goarch: ${{ matrix.goarch }}
