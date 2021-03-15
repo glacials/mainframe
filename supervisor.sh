@@ -19,7 +19,7 @@ rm -f $TARFILE
 mv mainframe ~/bin
 pkill mainframe
 source ~/.envrc
-~/bin/mainframe & > /var/log/mainframe.log
+tmux new -d -Asmainframe "~/bin/mainframe" # To attach later, use tmux attach -tmainframe
 
 cd ~/pj/mainframe
 git pull
