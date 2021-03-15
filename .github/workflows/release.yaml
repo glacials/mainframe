@@ -13,8 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build
-        uses: wangyoucao577/go-release-action@v1.14
+      - uses: wangyoucao577/go-release-action@v1.14
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goarch: ${{ matrix.goarch }}
@@ -22,5 +21,4 @@ jobs:
           goversion: "https://dl.google.com/go/go1.16beta1.linux-amd64.tar.gz"
           #ldflags: "-X main.version=${{ env.RELEASE_TAG }}"
           md5sum: false
-          project_path: "${{ env.CMD_PATH }}"
           sha256sum: true
