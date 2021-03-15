@@ -19,3 +19,6 @@ rm -f $TARFILE
 mv mainframe ~/bin
 pkill mainframe
 mainframe & > /var/log/mainframe.log
+
+cd ~/pj/mainframe
+git pull
