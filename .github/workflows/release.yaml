@@ -18,7 +18,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goarch: ${{ matrix.goarch }}
           goos: ${{ matrix.goos }}
-          goversion: "https://dl.google.com/go/go1.16beta1.linux-amd64.tar.gz"
-          ldflags: -X main.version=${{ env.GITHUB_SHA }}
+          goversion: https://dl.google.com/go/go1.16beta1.linux-amd64.tar.gz
+          ldflags: -X main.version=$GITHUB_SHA
           md5sum: false
           sha256sum: true
