@@ -13,12 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+
       - uses: wangyoucao577/go-release-action@v1.14
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goarch: ${{ matrix.goarch }}
           goos: ${{ matrix.goos }}
           goversion: https://dl.google.com/go/go1.16beta1.linux-amd64.tar.gz
-          ldflags: -X main.version=${{ github.ref }}
+          ldflags: -X main.version=${{ steps.tag.outputs.tag }}
           md5sum: false
           sha256sum: true
