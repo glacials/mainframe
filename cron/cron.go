@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/glacials/mainframe/dyndns"
 	"github.com/glacials/mainframe/selfupdate"
 	"github.com/glacials/mainframe/speedtest"
 	"github.com/robfig/cron"
