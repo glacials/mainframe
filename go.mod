@@ -1,6 +1,6 @@
 module github.com/glacials/mainframe
 
-go 1.14
+go 1.16
 
 require (
 	github.com/antonholmquist/jason v1.0.0 // indirect
