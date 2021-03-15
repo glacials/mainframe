@@ -18,6 +18,7 @@ rm -f $TARFILE
 
 mv mainframe ~/bin
 pkill mainframe
+source ~/.envrc
 ~/bin/mainframe & > /var/log/mainframe.log
 
 cd ~/pj/mainframe
