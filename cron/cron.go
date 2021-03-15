@@ -50,7 +50,6 @@ func Start(logger *log.Logger, version string) error {
 	}
 	logger.Println("Registered speedtest")
 
-	/* dyndns currently disabled
 	if err := c.AddFunc(dyndnsInterval, func() {
 		if err := dyndns.Run(logger); err != nil {
 			logger.Fatalf("dyndns failed: %v", err)
@@ -59,7 +58,6 @@ func Start(logger *log.Logger, version string) error {
 		return fmt.Errorf("cannot start dyndns cron: %v", err)
 	}
 	logger.Println("Registered dyndns")
-	*/
 
 	logger.Println("All crons registered")
 	c.Start()
