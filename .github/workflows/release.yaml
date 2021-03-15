@@ -12,7 +12,7 @@ jobs:
         goarch: [arm, amd64]
     steps:
       - name: Set APP_VERSION env
-        run: echo $(git describe --tags) > /github/workspace/version
+        run: echo $(git describe --tags) > version
       - name: Build
         uses: wangyoucao577/go-release-action@v1.13
         with:
@@ -20,6 +20,6 @@ jobs:
           goarch: ${{ matrix.goarch }}
           goos: ${{ matrix.goos }}
           goversion: "https://dl.google.com/go/go1.16beta1.linux-amd64.tar.gz"
-          ldflags: "-X main.version=$(cat /github/workspace/version)"
+          ldflags: "-X main.version=$(cat version)"
           md5sum: false
           sha256sum: true
