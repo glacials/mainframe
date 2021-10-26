@@ -16,8 +16,8 @@ jobs:
       - uses: wangyoucao577/go-release-action@v1.14
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          goarch: ${{ matrix.goarch }}
-          goos: ${{ matrix.goos }}
+          goarch: arm
+          goos: linux
           goversion: https://dl.google.com/go/go1.16beta1.linux-amd64.tar.gz
           ldflags: -X main.version=${{ steps.release.outputs.tag_name }}
           md5sum: false
