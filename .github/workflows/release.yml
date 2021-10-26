@@ -9,8 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: rymndhng/release-on-push-action@master
+        id: release
         with:
-          bump_version_scheme: patch
+          bump_version_scheme: minor
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: wangyoucao577/go-release-action@v1.14
