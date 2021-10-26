@@ -15,9 +15,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - uses: wangyoucao577/go-release-action@v1.14
         with:
+          release_tag: ${{ steps.release.outputs.tag_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goarch: arm
           goos: linux
-          ldflags: -X main.version=${{ steps.release.outputs.tag_name }}
+          ldflags: -X main.version=${{ steps.release.outputs.version }}
           md5sum: false
           sha256sum: true
