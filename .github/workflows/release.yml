@@ -15,7 +15,7 @@ jobs:
           bump_version_scheme: minor
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - uses: wangyoucao577/go-release-action@latest
+      - uses: wangyoucao577/go-release-action@master
         with:
           release_tag: ${{ steps.release.outputs.tag_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
