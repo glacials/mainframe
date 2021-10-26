@@ -18,7 +18,6 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goarch: arm
           goos: linux
-          goversion: https://dl.google.com/go/go1.16beta1.linux-amd64.tar.gz
           ldflags: -X main.version=${{ steps.release.outputs.tag_name }}
           md5sum: false
           sha256sum: true
