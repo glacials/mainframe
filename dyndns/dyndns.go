@@ -50,7 +50,7 @@ func Run(logger *log.Logger) error {
 
 	ip, err := client.Update(domain, nil)
 	if err == dyndns.NoChange {
-		return fmt.Errorf("not updating DNS because current IP is unchanged")
+		return fmt.Errorf("server says IP is unchanged")
 	}
 	if err != nil {
 		return fmt.Errorf("can't update dyndns for %s@%s to %s: %v", dyndnsUsername, dyndnsServer, domain, err)

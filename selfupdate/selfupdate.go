@@ -2,6 +2,7 @@ package selfupdate
 
 import (
 	"archive/tar"
+	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -41,6 +42,7 @@ func Run(logger *log.Logger, version string) error {
 	logger.Printf("Found %v, running %v; updating", latestVersion, version)
 
 	url := fmt.Sprintf(artifactURL, latestVersion, fmt.Sprintf(tarfile, latestVersion, runtime.GOOS, runtime.GOARCH))
+	logger.Printf("Downloading %s", url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return fmt.Errorf("can't fetch latest version from GitHub: %v", err)
@@ -51,14 +53,22 @@ func Run(logger *log.Logger, version string) error {
 		return fmt.Errorf("unexpected status code %d downloading artifact from %s", resp.StatusCode, url)
 	}
 
-	extracted := tar.NewReader(resp.Body)
+	gzr, err := gzip.NewReader(resp.Body)
+	if err != nil {
+		return fmt.Errorf("can't decompress new version: %v", err)
+	}
 
-	if err := update.Apply(extracted, update.Options{}); err != nil {
+	tr := tar.NewReader(gzr)
+	_, err = tr.Next()
+	if err != nil {
+		return fmt.Errorf("can't extract new version: %v", err)
+	}
+
+	if err := update.Apply(tr, update.Options{}); err != nil {
 		return fmt.Errorf("can't update myself: %v", err)
 	}
 
-	logger.Println("Finished update, shutting down")
-	logger.Println("Depending on system cron to boot me back up")
+	logger.Println("Finished update, rebooting")
 
 	executable, err := os.Executable()
 	if err != nil {
