@@ -24,3 +24,30 @@ jobs:
           ldflags: -X main.version=${{ steps.release.outputs.version }}
           md5sum: false
           sha256sum: true
+      - uses: wangyoucao577/go-release-action@master
+        with:
+          release_tag: ${{ steps.release.outputs.tag_name }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goarch: arm
+          goos: darwin
+          ldflags: -X main.version=${{ steps.release.outputs.version }}
+          md5sum: false
+          sha256sum: true
+      - uses: wangyoucao577/go-release-action@master
+        with:
+          release_tag: ${{ steps.release.outputs.tag_name }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goarch: amd64
+          goos: darwin
+          ldflags: -X main.version=${{ steps.release.outputs.version }}
+          md5sum: false
+          sha256sum: true
+      - uses: wangyoucao577/go-release-action@master
+        with:
+          release_tag: ${{ steps.release.outputs.tag_name }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goarch: amd64
+          goos: linux
+          ldflags: -X main.version=${{ steps.release.outputs.version }}
+          md5sum: false
+          sha256sum: true

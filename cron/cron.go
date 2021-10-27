@@ -28,6 +28,7 @@ func Start(logger *log.Logger, version string) error {
 	c := cron.New()
 
 	if version == "development" {
+		dyndnsInterval = minutely
 		selfupdateInterval = minutely
 		//speedtestInterval = minutely
 	}
@@ -52,7 +53,7 @@ func Start(logger *log.Logger, version string) error {
 
 	if err := c.AddFunc(dyndnsInterval, func() {
 		if err := dyndns.Run(logger); err != nil {
-			logger.Fatalf("dyndns failed: %v", err)
+			logger.Printf("dyndns failed: %v", err)
 		}
 	}); err != nil {
 		return fmt.Errorf("cannot start dyndns cron: %v", err)

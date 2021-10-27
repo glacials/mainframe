@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"runtime"
+	"syscall"
 
 	"github.com/inconshreveable/go-update"
 )
@@ -14,7 +16,7 @@ import (
 var (
 	versionURL  = "https://github.com/glacials/mainframe/releases/latest"
 	artifactURL = "https://github.com/glacials/mainframe/releases/download/%s/%s"
-	tarfile     = "mainframe-%s-linux-arm.tar.gz"
+	tarfile     = "mainframe-%s-%s-%s.tar.gz"
 	version     = "development"
 )
 
@@ -38,7 +40,7 @@ func Run(logger *log.Logger, version string) error {
 
 	logger.Printf("Found %v, running %v; updating", latestVersion, version)
 
-	url := fmt.Sprintf(artifactURL, latestVersion, fmt.Sprintf(tarfile, latestVersion))
+	url := fmt.Sprintf(artifactURL, latestVersion, fmt.Sprintf(tarfile, latestVersion, runtime.GOOS, runtime.GOARCH))
 	resp, err := http.Get(url)
 	if err != nil {
 		return fmt.Errorf("can't fetch latest version from GitHub: %v", err)
@@ -57,6 +59,15 @@ func Run(logger *log.Logger, version string) error {
 
 	logger.Println("Finished update, shutting down")
 	logger.Println("Depending on system cron to boot me back up")
+
+	executable, err := os.Executable()
+	if err != nil {
+		return fmt.Errorf("can't find my own binary: %v", err)
+	}
+
+	if err = syscall.Exec(executable, os.Args, os.Environ()); err != nil {
+		return fmt.Errorf("can't reboot myself: %v", err)
+	}
 
 	os.Exit(0)
 
