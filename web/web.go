@@ -11,7 +11,7 @@ import (
 	"github.com/glacials/mainframe/coldbrewcrew/iworkout"
 )
 
-const port = 9000
+const port = 80
 
 //go:embed html
 var html embed.FS
