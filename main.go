@@ -34,13 +34,10 @@ func main() {
 		}
 	}()
 
-	go func() {
-		if err := cron.Start(logger, version); err != nil {
-			logger.Fatalf("cron error: %v", err)
-		}
-	}()
+	if err := cron.Start(logger, version); err != nil {
+		logger.Fatalf("cron error: %v", err)
+	}
 
 	logger.Println("Mainframe booted")
-	for {
-	}
+	select {}
 }
