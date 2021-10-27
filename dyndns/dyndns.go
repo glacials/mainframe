@@ -57,7 +57,7 @@ func Run(logger *log.Logger) error {
 
 	localAddr := localIP.Query
 	if localAddr == lastKnownPublicIP.String() {
-		logger.Printf("IP hasn't changed from %s, so not updating dyndns", lastKnownPublicIP)
+		// logger.Printf("IP hasn't changed from %s, so not updating dyndns", lastKnownPublicIP)
 		return nil
 	}
 
