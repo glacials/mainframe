@@ -15,7 +15,7 @@ jobs:
           bump_version_scheme: patch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - namj: Package static files
+      - name: Package static files
         env:
           GOBIN: ${{ github.workspace }}
         run: |
