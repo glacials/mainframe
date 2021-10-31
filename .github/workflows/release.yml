@@ -16,6 +16,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Package static files
+        env:
+          GOPATH: ${{ github.workspace }}
         run: |
           go get github.com/markbates/pkger/cmd/pkger
           # -o <package you'll use pkger in> -include <loc of static files>
