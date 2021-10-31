@@ -15,14 +15,14 @@ jobs:
           bump_version_scheme: patch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Package static files
+      - namj: Package static files
         env:
-          GOPATH: ${{ github.workspace }}
+          GOBIN: ${{ github.workspace }}
         run: |
-          go get github.com/markbates/pkger/cmd/pkger
+          go install github.com/markbates/pkger/cmd/pkger
           # -o <package you'll use pkger in> -include <loc of static files>
-          pkger -o db -include /db/migrations
-          pkger -o web -include /web/html
+          ./pkger -o db -include /db/migrations
+          ./pkger -o web -include /web/html
       - name: Release ARM Linux
         uses: wangyoucao577/go-release-action@master
         with:
