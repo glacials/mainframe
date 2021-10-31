@@ -17,11 +17,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Package static files
         run: |
-          go install github.com/markbates/pkger/cmd/pkger
+          go get github.com/markbates/pkger/cmd/pkger
           # -o <package you'll use pkger in> -include <loc of static files>
           pkger -o db -include /db/migrations
           pkger -o web -include /web/html
-      - uses: wangyoucao577/go-release-action@master
+      - name: Release ARM Linux
+        uses: wangyoucao577/go-release-action@master
         with:
           release_tag: ${{ steps.release.outputs.tag_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -30,7 +31,8 @@ jobs:
           ldflags: -X main.version=${{ steps.release.outputs.version }}
           md5sum: false
           sha256sum: true
-      - uses: wangyoucao577/go-release-action@master
+      - name: Release Intel macOS
+        uses: wangyoucao577/go-release-action@master
         with:
           release_tag: ${{ steps.release.outputs.tag_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -39,7 +41,8 @@ jobs:
           ldflags: -X main.version=${{ steps.release.outputs.version }}
           md5sum: false
           sha256sum: true
-      - uses: wangyoucao577/go-release-action@master
+      - name: Release x86 Linux
+        uses: wangyoucao577/go-release-action@master
         with:
           release_tag: ${{ steps.release.outputs.tag_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
