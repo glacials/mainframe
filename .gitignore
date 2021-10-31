@@ -1,1 +1,3 @@
 mainframe
+*.db
+pkged.go

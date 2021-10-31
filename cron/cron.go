@@ -1,6 +1,7 @@
 package cron
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 
@@ -22,7 +23,7 @@ var (
 )
 
 // Start kicks off all various jobs that should be run occasionally.
-func Start(logger *log.Logger, version string) error {
+func Start(logger *log.Logger, db *sql.DB, version string) error {
 	logger = log.New(logger.Writer(), "[cron] ", logger.Flags())
 
 	c := cron.New()
@@ -30,7 +31,7 @@ func Start(logger *log.Logger, version string) error {
 	if version == "development" {
 		dyndnsInterval = minutely
 		selfupdateInterval = minutely
-		//speedtestInterval = minutely
+		speedtestInterval = minutely
 	}
 
 	if err := c.AddFunc(selfupdateInterval, func() {
@@ -43,7 +44,7 @@ func Start(logger *log.Logger, version string) error {
 	logger.Println("Registered selfupdate")
 
 	if err := c.AddFunc(speedtestInterval, func() {
-		if err := speedtest.Run(logger); err != nil {
+		if err := speedtest.Run(logger, db); err != nil {
 			logger.Fatalf("speedtest failed: %v", err)
 		}
 	}); err != nil {

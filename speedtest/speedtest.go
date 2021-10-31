@@ -1,16 +1,31 @@
 package speedtest
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"time"
 
 	"github.com/ddo/go-fast"
 )
 
+const insert = `
+  INSERT INTO speedtests (
+    hostname,
+    started_at,
+    ended_at,
+    kbps_down
+  ) VALUES (
+    $1, $2, $3, $4
+  );
+`
+
 // Run runs a speedtest and records the results.
-func Run(logger *log.Logger) error {
+func Run(logger *log.Logger, db *sql.DB) error {
 	logger = log.New(logger.Writer(), "[speedtest] ", logger.Flags())
-	logger.Printf("Starting")
+
+  startedAt := time.Now()
 
 	client := fast.New()
 	if err := client.Init(); err != nil {
@@ -38,6 +53,19 @@ func Run(logger *log.Logger) error {
 	if i == 0 {
 		return fmt.Errorf("speedtest didn't get any kbps packets; starting over")
 	}
-	logger.Printf("Finished: %.2f Mbps", kbpsSum/float64(i)/1000)
+	logger.Printf("%.2f Mbps", kbpsSum/float64(i)/1000)
+
+  endedAt := time.Now()
+
+  hostname, err := os.Hostname()
+  if err != nil {
+    return fmt.Errorf("can't get hostname: %v", err)
+  }
+
+  _, err = db.Exec(insert, hostname, startedAt, endedAt, kbpsSum/float64(i))
+  if err != nil {
+    return fmt.Errorf("speedtest insert failed: %v", err)
+  }
+
 	return nil
 }

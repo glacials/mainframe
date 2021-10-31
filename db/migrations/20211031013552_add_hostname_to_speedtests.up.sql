@@ -1,0 +1,2 @@
+ALTER TABLE speedtests
+ADD COLUMN hostname TEXT NOT NULL;

@@ -9,14 +9,13 @@ require (
 	github.com/ddo/go-spin v0.0.0-20160718105357-ab0a40e623c0 // indirect
 	github.com/ddo/pick-json v0.0.0-20170207095303-c8760e09e0fe // indirect
 	github.com/ddo/rq v0.0.0-20190828174524-b3daa55fcaba // indirect
-	github.com/google/uuid v1.1.5
-	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/golang-migrate/migrate/v4 v4.15.1
+	github.com/google/uuid v1.3.0
 	github.com/inconshreveable/go-update v0.0.0-20160112193335-8152e7eb6ccf
 	github.com/jayschwa/go-dyndns v0.0.0-20130808202408-c49f6dc440e2
+	github.com/markbates/pkger v0.17.1
+	github.com/mattn/go-sqlite3 v1.14.9
 	github.com/robfig/cron v1.2.0
-	golang.org/x/crypto v0.0.0-20190605123033-f99c8df09eb5 // indirect
-	golang.org/x/net v0.0.0-20201224014010-6772e930b67b // indirect
-	golang.org/x/sys v0.0.0-20210113181707-4bcb84eeeb78 // indirect
 	gopkg.in/ddo/go-dlog.v1 v1.0.2 // indirect
 	gopkg.in/ddo/go-dlog.v2 v2.1.0 // indirect
 	gopkg.in/ddo/pick.v1 v1.2.2 // indirect

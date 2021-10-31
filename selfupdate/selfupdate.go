@@ -30,7 +30,7 @@ func Run(logger *log.Logger, version string) error {
 	logger = log.New(logger.Writer(), "[selfupdate] ", logger.Flags())
 
 	if version == "development" {
-		logger.Printf("skipping self-update in development mode")
+		// logger.Printf("skipping self-update in development mode")
 		return nil
 	}
 
