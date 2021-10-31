@@ -25,6 +25,8 @@ jobs:
           ./pkger -o web -include /web/html
       - name: Release ARM Linux
         uses: wangyoucao577/go-release-action@master
+        env:
+          CGO_ENABLED: 1
         with:
           release_tag: ${{ steps.release.outputs.tag_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -35,6 +37,8 @@ jobs:
           sha256sum: true
       - name: Release Intel macOS
         uses: wangyoucao577/go-release-action@master
+        env:
+          CGO_ENABLED: 1
         with:
           release_tag: ${{ steps.release.outputs.tag_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -45,6 +49,8 @@ jobs:
           sha256sum: true
       - name: Release x86 Linux
         uses: wangyoucao577/go-release-action@master
+        env:
+          CGO_ENABLED: 1
         with:
           release_tag: ${{ steps.release.outputs.tag_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
