@@ -1,4 +1,4 @@
-module github.com/glacials/mainframe
+module twos.dev/mainframe
 
 go 1.16
 

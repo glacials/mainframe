@@ -6,16 +6,20 @@ import (
 	"log"
 	"os"
 
-	_ "github.com/glacials/mainframe/coldbrewcrew/iworkout"
-	"github.com/glacials/mainframe/cron"
-	"github.com/glacials/mainframe/db"
-	"github.com/glacials/mainframe/web"
+	_ "twos.dev/mainframe/coldbrewcrew/iworkout"
+	"twos.dev/mainframe/cron"
+	"twos.dev/mainframe/db"
+	"twos.dev/mainframe/web"
 )
 
 var (
 	version     string = "development"
 	versionFlag        = flag.Bool("version", false, "prints mainframe version")
-  debugFlag = flag.Bool("debug", false, "runs in debug mode (frequent crons)")
+	debugFlag          = flag.Bool(
+		"debug",
+		false,
+		"runs in debug mode (frequent crons)",
+	)
 )
 
 func main() {
@@ -29,10 +33,10 @@ func main() {
 	}
 
 	logger.Print("Booting mainframe")
-  db, err := db.New(logger, "mainframe")
-  if err != nil {
-    logger.Fatalf("database error: %v", err)
-  }
+	db, err := db.New(logger, "mainframe")
+	if err != nil {
+		logger.Fatalf("database error: %v", err)
+	}
 
 	go func() {
 		if err := web.Start(logger); err != nil {

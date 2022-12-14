@@ -79,11 +79,11 @@ Run:
 
 Open:
 
-.link http://localhost:6060/pkg/github.com/glacials/mainframe/talks/everyday-go/v4/doc/ localhost:6060
+.link http://localhost:6060/pkg/twos.dev/mainframe/talks/everyday-go/v4/doc/ localhost:6060
 
 Run:
 
-	vim ~/go/src/github.com/glacials/mainframe/talks/everyday-go/v4/doc/person.go
+	vim ~/go/src/twos.dev/mainframe/talks/everyday-go/v4/doc/person.go
 
 
 ## Packages and directories

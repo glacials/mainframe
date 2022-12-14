@@ -47,7 +47,11 @@ func Run(logger *log.Logger, version string) error {
 
 	logger.Printf("Found %v, running %v; updating", latestVersion, version)
 
-	url := fmt.Sprintf(artifactURL, latestVersion, fmt.Sprintf(tarfile, latestVersion, runtime.GOOS, runtime.GOARCH))
+	url := fmt.Sprintf(
+		artifactURL,
+		latestVersion,
+		fmt.Sprintf(tarfile, latestVersion, runtime.GOOS, runtime.GOARCH),
+	)
 	logger.Printf("Downloading %s", url)
 	resp, err := http.Get(url)
 	if err != nil {
@@ -56,7 +60,11 @@ func Run(logger *log.Logger, version string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		return fmt.Errorf("unexpected status code %d downloading artifact from %s", resp.StatusCode, url)
+		return fmt.Errorf(
+			"unexpected status code %d downloading artifact from %s",
+			resp.StatusCode,
+			url,
+		)
 	}
 
 	gzr, err := gzip.NewReader(resp.Body)

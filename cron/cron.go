@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/glacials/mainframe/dyndns"
-	"github.com/glacials/mainframe/selfupdate"
-	"github.com/glacials/mainframe/speedtest"
 	"github.com/robfig/cron"
+	"twos.dev/mainframe/dyndns"
+	"twos.dev/mainframe/selfupdate"
+	"twos.dev/mainframe/speedtest"
 )
 
 var (
