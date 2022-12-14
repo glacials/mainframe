@@ -29,10 +29,24 @@ fi
 
 echo "Checking mainframe versions..."
 
+uname=$(uname -s | tr "[:upper:]" "[:lower:]")
+if [[ $uname == linux* ]]; then
+  platform="linux"
+elif [[ $uname == darwin* ]]; then
+  platform="darwin"
+elif [[ $uname == msys* ]]; then
+  platform="windows"
+else
+  echo "  Error: Unknown platform."
+  exit 1
+fi
+
+
+
 MAINFRAME_LOCAL=~/bin/mainframe
 LATEST_VERSION=$(curl -L -s -H 'Accept: application/json' https://github.com/glacials/mainframe/releases/latest | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
 TARFILE="mainframe-$LATEST_VERSION-linux-arm.tar.gz"
-ARTIFACT_URL="https://github.com/glacials/mainframe/releases/download/$LATEST_VERSION/mainframe-$LATEST_VERSION-linux-arm.tar.gz"
+ARTIFACT_URL="https://github.com/glacials/mainframe/releases/download/$LATEST_VERSION/mainframe-$LATEST_VERSION-$platform-$(uname -m).tar.gz"
 
 echo "  Current: $($MAINFRAME_LOCAL --version)"
 echo "  Latest:  $LATEST_VERSION"
