@@ -7,7 +7,7 @@ echo "Supervisor starting."
 echo "Checking mainframe status..."
 echo "  Installed: yes"
 
-if pidof mainframe > /dev/null
+if ps aux | grep -v grep | grep -c mainframe
 then
   echo "  Running: yes"
 else
@@ -17,7 +17,7 @@ else
   tmux new -ds mainframe || echo "  Using existing tmux session"
   tmux send-keys -t mainframe mainframe C-m
   sleep 2
-  if pidof mainframe > /dev/null
+  if ps aux | grep -v grep | grep -c mainframe
   then
     echo "  Success: yes"
   else
@@ -41,12 +41,10 @@ else
   exit 1
 fi
 
-
-
 MAINFRAME_LOCAL=~/bin/mainframe
 LATEST_VERSION=$(curl -L -s -H 'Accept: application/json' https://github.com/glacials/mainframe/releases/latest | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')
 TARFILE="mainframe-$LATEST_VERSION-$platform-$(uname -m).tar.gz"
-ARTIFACT_URL="https://github.com/glacials/mainframe/releases/download/$LATEST_VERSION/mainframe-$LATEST_VERSION-$platform-$(uname -m).tar.gz"
+ARTIFACT_URL="https://github.com/glacials/mainframe/releases/download/$LATEST_VERSION/$TARFILE"
 
 echo "  Current: $($MAINFRAME_LOCAL --version)"
 echo "  Latest:  $LATEST_VERSION"
