@@ -2,3 +2,4 @@ mainframe
 *.db
 pkged.go
 *.tar.gz
+token.json

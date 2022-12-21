@@ -16,6 +16,8 @@ require (
 	github.com/markbates/pkger v0.17.1
 	github.com/mattn/go-sqlite3 v1.14.9
 	github.com/robfig/cron v1.2.0
+	golang.org/x/oauth2 v0.0.0-20210628180205-a41e5a781914
+	google.golang.org/api v0.51.0
 	gopkg.in/ddo/go-dlog.v1 v1.0.2 // indirect
 	gopkg.in/ddo/go-dlog.v2 v2.1.0 // indirect
 	gopkg.in/ddo/pick.v1 v1.2.2 // indirect

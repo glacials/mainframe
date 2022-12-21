@@ -13,9 +13,9 @@ import (
 )
 
 var (
-	version     string = "development"
-	versionFlag        = flag.Bool("version", false, "prints mainframe version")
-	debugFlag          = flag.Bool(
+	version     = "development"
+	versionFlag = flag.Bool("version", false, "prints mainframe version")
+	debugFlag   = flag.Bool(
 		"debug",
 		false,
 		"runs in debug mode (frequent crons)",
@@ -38,13 +38,12 @@ func main() {
 		logger.Fatalf("database error: %v", err)
 	}
 
-	go func() {
-		if err := web.Start(logger); err != nil {
-			logger.Fatalf("web error: %v", err)
-		}
-	}()
+	mux, err := web.Start(logger)
+	if err != nil {
+		logger.Fatalf("web error: %v", err)
+	}
 
-	if err := cron.Start(logger, db, version); err != nil {
+	if err := cron.Start(logger, db, version, mux); err != nil {
 		logger.Fatalf("cron error: %v", err)
 	}
 

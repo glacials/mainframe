@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 	"time"
 
@@ -22,10 +23,10 @@ const insert = `
 `
 
 // Run runs a speedtest and records the results.
-func Run(logger *log.Logger, db *sql.DB) error {
+func Run(logger *log.Logger, _ string, db *sql.DB, _ *http.ServeMux) error {
 	logger = log.New(logger.Writer(), "[speedtest] ", logger.Flags())
 
-  startedAt := time.Now()
+	startedAt := time.Now()
 
 	client := fast.New()
 	if err := client.Init(); err != nil {
@@ -55,17 +56,17 @@ func Run(logger *log.Logger, db *sql.DB) error {
 	}
 	logger.Printf("%.2f Mbps", kbpsSum/float64(i)/1000)
 
-  endedAt := time.Now()
+	endedAt := time.Now()
 
-  hostname, err := os.Hostname()
-  if err != nil {
-    return fmt.Errorf("can't get hostname: %v", err)
-  }
+	hostname, err := os.Hostname()
+	if err != nil {
+		return fmt.Errorf("can't get hostname: %v", err)
+	}
 
-  _, err = db.Exec(insert, hostname, startedAt, endedAt, kbpsSum/float64(i))
-  if err != nil {
-    return fmt.Errorf("speedtest insert failed: %v", err)
-  }
+	_, err = db.Exec(insert, hostname, startedAt, endedAt, kbpsSum/float64(i))
+	if err != nil {
+		return fmt.Errorf("speedtest insert failed: %v", err)
+	}
 
 	return nil
 }

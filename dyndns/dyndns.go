@@ -1,6 +1,7 @@
 package dyndns
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -8,13 +9,13 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/jayschwa/go-dyndns"
 )
 
-const domain = "mainframe.bifrost.house"
-
 var (
+	domain         = os.Getenv("DYNDNS_DOMAIN")
 	dyndnsServer   = os.Getenv("DYNDNS_SERVER")
 	dyndnsUsername = os.Getenv("DYNDNS_USERNAME")
 	dyndnsPassword = os.Getenv("DYNDNS_PASSWORD")
@@ -24,9 +25,39 @@ var (
 	lastKnownPublicIP net.IP = nil
 )
 
-// Run updates Google Domains with our current IP.
-func Run(logger *log.Logger) error {
+// Run updates Google Domains with our current IPu.
+func Run(
+	logger *log.Logger,
+	version string,
+	_ *sql.DB,
+	_ *http.ServeMux,
+) error {
 	logger = log.New(logger.Writer(), "[dyndns] ", logger.Flags())
+
+	if version == "development" {
+		logger.Println("In development mode; skipping dyndns update")
+		return nil
+	}
+
+	var unset []string
+	if domain == "" {
+		unset = append(unset, "DYNDNS_DOMAIN")
+	}
+	if dyndnsServer == "" {
+		unset = append(unset, "DYNDNS_SERVER")
+	}
+	if dyndnsUsername == "" {
+		unset = append(unset, "DYNDNS_USERNAME")
+	}
+	if dyndnsPassword == "" {
+		unset = append(unset, "DYNDNS_PASSWORD")
+	}
+	if len(unset) > 0 {
+		return fmt.Errorf(
+			"environment variables %s must be set",
+			strings.Join(unset, ", "),
+		)
+	}
 
 	// We're not really allowed to update using dyndns if our IP address hasn't
 	// changed, so we need to keep track of it and check our current one before
@@ -61,7 +92,11 @@ func Run(logger *log.Logger) error {
 		return nil
 	}
 
-	logger.Printf("current IP: %s; DNS IP: %s", localAddr, lastKnownPublicIP.String())
+	logger.Printf(
+		"current IP: %s; DNS IP: %s",
+		localAddr,
+		lastKnownPublicIP.String(),
+	)
 
 	client := dyndns.Service{
 		URL:      dyndnsServer,
@@ -75,7 +110,13 @@ func Run(logger *log.Logger) error {
 		return fmt.Errorf("server says IP is unchanged")
 	}
 	if err != nil {
-		return fmt.Errorf("can't update dyndns for %s@%s to %s: %v", dyndnsUsername, dyndnsServer, domain, err)
+		return fmt.Errorf(
+			"can't update dyndns for %s@%s to %s: %v",
+			dyndnsUsername,
+			dyndnsServer,
+			domain,
+			err,
+		)
 	}
 
 	lastKnownPublicIP = ip

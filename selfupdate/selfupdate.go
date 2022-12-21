@@ -3,6 +3,7 @@ package selfupdate
 import (
 	"archive/tar"
 	"compress/gzip"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -26,7 +27,12 @@ type gitHubVersionResponse struct {
 }
 
 // Run runs a self-update if needed.
-func Run(logger *log.Logger, version string) error {
+func Run(
+	logger *log.Logger,
+	version string,
+	_ *sql.DB,
+	_ *http.ServeMux,
+) error {
 	logger = log.New(logger.Writer(), "[selfupdate] ", logger.Flags())
 
 	if version == "development" {

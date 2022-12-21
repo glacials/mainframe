@@ -39,8 +39,9 @@ func overrideMIMEType(logger *log.Logger, h http.Handler) http.Handler {
 	})
 }
 
-// Start boots the web server and listens for connections.
-func Start(logger *log.Logger) error {
+// Start boots the web server in a goroutine and then immediately returns the
+// root serve mux.
+func Start(logger *log.Logger) (*http.ServeMux, error) {
 	logger = log.New(logger.Writer(), "[web] ", logger.Flags())
 	logger.Println("Booting web")
 
@@ -49,12 +50,12 @@ func Start(logger *log.Logger) error {
 
 	indexFile, err := pkger.Open("/web/html/index.html")
 	if err != nil {
-		return fmt.Errorf("can't open index.html: %v", err)
+		return nil, fmt.Errorf("can't open index.html: %v", err)
 	}
 
 	indexBytes, err := ioutil.ReadAll(indexFile)
 	if err != nil {
-		return fmt.Errorf("can't read index.html: %v", err)
+		return nil, fmt.Errorf("can't read index.html: %v", err)
 	}
 
 	indexStr := string(indexBytes)
@@ -62,24 +63,26 @@ func Start(logger *log.Logger) error {
 
 	iworkoutFile, err := pkger.Open("/web/html/iworkout.html")
 	if err != nil {
-		return fmt.Errorf("can't open iworkout.html: %v", err)
+		return nil, fmt.Errorf("can't open iworkout.html: %v", err)
 	}
 
 	iworkoutBytes, err := ioutil.ReadAll(iworkoutFile)
 	if err != nil {
-		return fmt.Errorf("can't read iworkout.html: %v", err)
+		return nil, fmt.Errorf("can't read iworkout.html: %v", err)
 	}
 
 	iworkoutStr := string(iworkoutBytes)
 	iworkoutTemplate := template.Must(template.New("").Parse(iworkoutStr))
 
-	http.Handle("/static/", http.StripPrefix("/static/", dir))
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux := http.NewServeMux()
+
+	mux.Handle("/static/", http.StripPrefix("/static/", dir))
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if err := indexTemplate.Execute(w, nil); err != nil {
 			logger.Printf("error executing index template: %v", err)
 		}
 	})
-	http.HandleFunc("/iworkout", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/iworkout", func(w http.ResponseWriter, r *http.Request) {
 		params := IworkoutParams{
 			Users:     iworkout.Users(),
 			Messages:  iworkout.Messages(),
@@ -91,12 +94,14 @@ func Start(logger *log.Logger) error {
 		}
 	})
 
-	logger.Printf("Booted web, listening on %s:%d\n", "localhost", port)
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil); err != nil {
-		return fmt.Errorf("server stopped: %v", err)
-	}
+	logger.Printf("Booted web, listening on http://%s:%d\n", "localhost", port)
+	go func() {
+		if err := http.ListenAndServe(fmt.Sprintf(":%d", port), mux); err != nil {
+			logger.Printf("server stopped: %v", err)
+		}
+	}()
 
-	return nil
+	return mux, nil
 }
 
 // AddOne is a template convenience function that returns 1 + its argument.
