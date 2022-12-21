@@ -19,7 +19,6 @@ var (
 	versionURL  = "https://github.com/glacials/mainframe/releases/latest"
 	artifactURL = "https://github.com/glacials/mainframe/releases/download/%s/%s"
 	tarfile     = "mainframe-%s-%s-%s.tar.gz"
-	version     = "development"
 )
 
 type gitHubVersionResponse struct {
@@ -36,7 +35,7 @@ func Run(
 	logger = log.New(logger.Writer(), "[selfupdate] ", logger.Flags())
 
 	if version == "development" {
-		// logger.Printf("skipping self-update in development mode")
+		logger.Printf("In development mode; skipping self-update")
 		return nil
 	}
 

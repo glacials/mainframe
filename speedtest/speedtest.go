@@ -11,7 +11,7 @@ import (
 	"github.com/ddo/go-fast"
 )
 
-const insert = `
+const insertSQL = `
   INSERT INTO speedtests (
     hostname,
     started_at,
@@ -25,6 +25,7 @@ const insert = `
 // Run runs a speedtest and records the results.
 func Run(logger *log.Logger, _ string, db *sql.DB, _ *http.ServeMux) error {
 	logger = log.New(logger.Writer(), "[speedtest] ", logger.Flags())
+	logger.Println("Starting test")
 
 	startedAt := time.Now()
 
@@ -63,7 +64,7 @@ func Run(logger *log.Logger, _ string, db *sql.DB, _ *http.ServeMux) error {
 		return fmt.Errorf("can't get hostname: %v", err)
 	}
 
-	_, err = db.Exec(insert, hostname, startedAt, endedAt, kbpsSum/float64(i))
+	_, err = db.Exec(insertSQL, hostname, startedAt, endedAt, kbpsSum/float64(i))
 	if err != nil {
 		return fmt.Errorf("speedtest insert failed: %v", err)
 	}
