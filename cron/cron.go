@@ -17,7 +17,7 @@ const (
 	production  environment = "production"
 	development environment = "development"
 
-	minutely = "@every 2m"
+	minutely = "@every 1m"
 	hourly   = "@every 1h"
 )
 
@@ -26,6 +26,7 @@ type cronSpec struct {
 	name      string
 	f         func(*log.Logger, string, *sql.DB, *http.ServeMux) error
 	intervals map[environment]string
+	enabled   bool
 }
 
 // Cron fields are, in order:
@@ -40,6 +41,7 @@ var (
 				development: minutely,
 				production:  "0 0 * * *",
 			},
+			enabled: false,
 		},
 		{
 			name: "dyndns",
@@ -48,6 +50,7 @@ var (
 				development: minutely,
 				production:  "0 * * * *",
 			},
+			enabled: true,
 		},
 		{
 			name: "selfupdate",
@@ -56,13 +59,16 @@ var (
 				development: minutely,
 				production:  "0 2 * * *",
 			},
+			enabled: true,
 		},
 		{
 			name: "speedtest",
 			f:    speedtest.Run,
 			intervals: map[environment]string{
 				development: hourly,
-				production:  "0 5 * * *"},
+				production:  "0 5 * * *",
+			},
+			enabled:  true,
 		},
 	}
 )
@@ -78,8 +84,8 @@ func Start(
 	environment := development
 	if version != "development" {
 		environment = production
-	}
 
+	}
 	c := cron.New()
 
 	if environment == development {
@@ -97,22 +103,15 @@ func Start(
 		}
 	}
 
-	for _, cronSpec := range crons {
-		logger.Printf(
-			"Registering %s for %s\n",
-			cronSpec.name,
-			cronSpec.intervals[environment],
-		)
-		if _, err := c.AddFunc(cronSpec.intervals[environment], func() {
-			logger.Printf("Kicking off %s\n", cronSpec.name)
-			if err := cronSpec.f(logger, version, db, mux); err != nil {
-				logger.Printf("%s failed: %v", cronSpec.name, err)
-			}
-		}); err != nil {
-			return fmt.Errorf("cannot start %s cron: %v", cronSpec.name, err)
+	if _, err := c.AddFunc(minutely, func() {
+		logger.Printf("Kicking off %s\n", "speedtest")
+		if err := speedtest.Run(logger, version, db, mux); err != nil {
+			logger.Printf("%s failed: %v", "speedtest", err)
 		}
-		logger.Printf("Registered %s\n", cronSpec.name)
+	}); err != nil {
+		return fmt.Errorf("cannot start speedtest cron: %v", err)
 	}
+	logger.Printf("Registered %s\n", "speedtest")
 
 	logger.Println("All crons registered")
 	c.Start()
