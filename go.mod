@@ -3,6 +3,7 @@ module twos.dev/mainframe
 go 1.16
 
 require (
+	cloud.google.com/go/vision v1.2.0 // indirect
 	cloud.google.com/go/vision/v2 v2.5.0 // indirect
 	github.com/antonholmquist/jason v1.0.0 // indirect
 	github.com/bwmarrin/discordgo v0.20.3
