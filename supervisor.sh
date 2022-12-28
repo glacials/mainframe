@@ -42,7 +42,7 @@ else
 fi
 
 arch=$(uname -m)
-if [[ $uname == armv7l ]]; then
+if [[ $arch == arm* ]]; then
   arch="arm"
 fi
 
