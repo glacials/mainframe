@@ -13,7 +13,9 @@ import (
 )
 
 func Run(logger *log.Logger, _ string, db *sql.DB, mux *http.ServeMux, gcpClient *http.Client) error {
+	logger = log.New(logger.Writer(), "[calendar] ", logger.Flags())
 	ctx := context.Background()
+
 	srv, err := calendar.NewService(ctx, option.WithHTTPClient(gcpClient))
 	if err != nil {
 		return fmt.Errorf("unable to retrieve calendar client: %v", err)

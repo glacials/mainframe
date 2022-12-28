@@ -48,13 +48,13 @@ const (
 )
 
 var (
-	gcpEnvKey      = "GCP_CREDENTIALS_FILE"
-	gcpCredentials = os.Getenv("GCP_CREDENTIALS_FILE")
-	scopes         = vision.DefaultAuthScopes()
+	gcpEnvKey = "GCP_CREDENTIALS_FILE"
+	gcpEnvVal = os.Getenv("GCP_CREDENTIALS_FILE")
+	scopes    = vision.DefaultAuthScopes()
 )
 
 func newGCPClient(logger *log.Logger, db *sql.DB, mux *http.ServeMux) (*http.Client, error) {
-	if gcpCredentials == "" {
+	if gcpEnvVal == "" {
 		return nil, fmt.Errorf("%s is not set", gcpEnvKey)
 	}
 
@@ -63,7 +63,7 @@ func newGCPClient(logger *log.Logger, db *sql.DB, mux *http.ServeMux) (*http.Cli
 		w.WriteHeader(200)
 	})
 
-	b, err := os.ReadFile(gcpCredentials)
+	b, err := os.ReadFile(gcpEnvVal)
 	if err != nil {
 		return nil, fmt.Errorf("unable to read client secret file: %v", err)
 	}
