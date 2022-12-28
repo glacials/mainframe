@@ -31,6 +31,7 @@ func Run(
 	version string,
 	_ *sql.DB,
 	_ *http.ServeMux,
+	_ *http.Client,
 ) error {
 	logger = log.New(logger.Writer(), "[selfupdate] ", logger.Flags())
 

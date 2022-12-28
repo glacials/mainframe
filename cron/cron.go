@@ -24,7 +24,7 @@ const (
 type environment string
 type cronSpec struct {
 	name      string
-	f         func(*log.Logger, string, *sql.DB, *http.ServeMux) error
+	f         func(*log.Logger, string, *sql.DB, *http.ServeMux, *http.Client) error
 	intervals map[environment]string
 	enabled   bool
 }
@@ -68,7 +68,7 @@ var (
 				development: hourly,
 				production:  "0 5 * * *",
 			},
-			enabled:  true,
+			enabled: true,
 		},
 	}
 )
@@ -79,6 +79,7 @@ func Start(
 	db *sql.DB,
 	version string,
 	mux *http.ServeMux,
+	gcpClient *http.Client,
 ) error {
 	logger = log.New(logger.Writer(), "[cron] ", logger.Flags())
 	environment := development
@@ -96,7 +97,7 @@ func Start(
 			f := cronDef.f
 			name := cronDef.name
 			go func() {
-				if err := f(logger, version, db, mux); err != nil {
+				if err := f(logger, version, db, mux, gcpClient); err != nil {
 					logger.Printf("%s failed: %v", name, err)
 				}
 			}()
@@ -105,7 +106,7 @@ func Start(
 
 	if _, err := c.AddFunc(minutely, func() {
 		logger.Printf("Kicking off %s\n", "speedtest")
-		if err := speedtest.Run(logger, version, db, mux); err != nil {
+		if err := speedtest.Run(logger, version, db, mux, gcpClient); err != nil {
 			logger.Printf("%s failed: %v", "speedtest", err)
 		}
 	}); err != nil {

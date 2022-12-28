@@ -3,6 +3,7 @@ module twos.dev/mainframe
 go 1.16
 
 require (
+	cloud.google.com/go v0.88.0 // indirect
 	github.com/antonholmquist/jason v1.0.0 // indirect
 	github.com/bwmarrin/discordgo v0.20.3
 	github.com/ddo/go-fast v0.0.0-20190807090025-2ab4a3dd618c

@@ -43,7 +43,12 @@ func main() {
 		logger.Fatalf("web error: %v", err)
 	}
 
-	if err := cron.Start(logger, db, version, mux); err != nil {
+	gcpClient, err := newGCPClient(logger, db, mux)
+	if err != nil {
+		logger.Fatalf("gcp client error: %v", err)
+	}
+
+	if err := cron.Start(logger, db, version, mux, gcpClient); err != nil {
 		logger.Fatalf("cron error: %v", err)
 	}
 

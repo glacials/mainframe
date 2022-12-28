@@ -22,3 +22,16 @@ Then set up a user cron like so:
 ```
 
 The supervisor script will handle the rest, including auto-updating.
+
+## Development
+
+### Creating a new migration
+
+Make sure you have [`golang-migrate`](https://github.com/golang-migrate/migrate)
+installed via the Go toolchain, as the Homebrew installation doesn't come
+compiled with the SQLite3 driver.
+
+```sh
+migrate -path db/migrations create -seq -ext sql name_of_migration
+$EDITOR db/migrations/*name_of_migration.{up,down}.sql
+```

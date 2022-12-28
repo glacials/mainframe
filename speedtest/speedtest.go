@@ -23,7 +23,7 @@ const insertSQL = `
 `
 
 // Run runs a speedtest and records the results.
-func Run(logger *log.Logger, _ string, db *sql.DB, _ *http.ServeMux) error {
+func Run(logger *log.Logger, _ string, db *sql.DB, _ *http.ServeMux, _ *http.Client) error {
 	logger = log.New(logger.Writer(), "[speedtest] ", logger.Flags())
 	logger.Println("Starting test")
 
