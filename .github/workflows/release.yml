@@ -8,7 +8,7 @@ jobs:
     name: Create release
     runs-on: ubuntu-latest
     outputs:
-      release_tag: ${{ steps.release.outputs.tag_name }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
       version: ${{ steps.release.outputs.version }}
     steps:
       - uses: actions/checkout@v3
