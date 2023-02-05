@@ -27,7 +27,7 @@ jobs:
         env:
           GOBIN: ${{ github.workspace }}
         run: |
-          go install github.com/markbates/pkger/cmd/pkger
+          go install github.com/markbates/pkger/cmd/pkger@latest
           # -o <package you'll use pkger in> -include <loc of static files>
           ./pkger -o db -include /db/migrations
           ./pkger -o web -include /web/html
