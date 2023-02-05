@@ -8,7 +8,7 @@ import (
 	"log"
 
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/sqlite3"
+	"github.com/golang-migrate/migrate/v4/database/sqlite"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/golang-migrate/migrate/v4/source/pkger"
 	_ "modernc.org/sqlite"
@@ -26,7 +26,7 @@ func New(logger *log.Logger, name string) (*sql.DB, error) {
 		return nil, fmt.Errorf("can't open database: %v", err)
 	}
 
-	driver, err := sqlite3.WithInstance(db, &sqlite3.Config{DatabaseName: name})
+	driver, err := sqlite.WithInstance(db, &sqlite.Config{DatabaseName: name})
 	if err != nil {
 		return nil, fmt.Errorf(
 			"can't create migration driver for %s: %v",
