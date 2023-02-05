@@ -28,7 +28,7 @@ jobs:
           ./pkger -o web -include /web/html
   build:
     name: Build ${{ matrix.name }}
-    needs: release
+    needs: bump
     strategy:
       matrix:
         include:
