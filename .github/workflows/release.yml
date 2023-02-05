@@ -25,6 +25,22 @@ jobs:
           ./pkger -o web -include /web/html
   upload:
     name: Upload artifacts
+    needs: release
+    strategy:
+      matrix:
+        include:
+          - name: Linux x86_64
+            goos: linux
+            goarch: amd64
+          - name: Linux ARM
+            goos: linux
+            goarch: arm
+          - name: macOS Intel
+            goos: darwin
+            goarch: amd64
+          - name: macOS Apple Silicon
+            goos: darwin
+            goarch: arm64
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
