@@ -41,10 +41,7 @@ else
   exit 1
 fi
 
-arch=$(uname -m)
-if [[ $arch == arm* ]]; then
-  arch="arm"
-fi
+arch=$(uname -m) # macOS Apple Silicon gives "arm64"
 
 MAINFRAME_LOCAL=~/bin/mainframe
 LATEST_VERSION=$(curl -L -s -H 'Accept: application/json' https://github.com/glacials/mainframe/releases/latest | sed -e 's/.*"tag_name":"\([^"]*\)".*/\1/')

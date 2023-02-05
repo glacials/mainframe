@@ -54,6 +54,8 @@ jobs:
           md5sum: false
           sha256sum: true
       - name: Release ARM macOS
+        env:
+          - CGO_ENABLED: 1
         uses: wangyoucao577/go-release-action@master
         with:
           release_tag: ${{ steps.release.outputs.tag_name }}
