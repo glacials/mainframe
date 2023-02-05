@@ -50,10 +50,10 @@ jobs:
       - name: Release
         uses: wangyoucao577/go-release-action@master
         with:
-          release_tag: ${{ needs.release.outputs.tag_name }}
+          release_tag: ${{ needs.bump.outputs.tag_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goarch: ${{ matrix.goarch }}
           goos: ${{ matrix.goos }}
-          ldflags: -X main.version=${{ needs.release.outputs.version }}
+          ldflags: -X main.version=${{ needs.bump.outputs.version }}
           md5sum: false
           sha256sum: true
