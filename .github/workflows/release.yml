@@ -24,7 +24,7 @@ jobs:
           ./pkger -o db -include /db/migrations
           ./pkger -o web -include /web/html
   upload:
-    name: Upload artifacts
+    name: Upload ${{ matrix.name }}
     needs: release
     strategy:
       matrix:
@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Release ${{ matrix.name }}
+      - name: Release
         uses: wangyoucao577/go-release-action@master
         with:
           release_tag: ${{ steps.release.outputs.tag_name }}
