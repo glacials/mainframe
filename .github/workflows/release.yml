@@ -6,7 +6,7 @@ on:
 jobs:
   release:
     name: Create release
-    runs-on: ubuntu
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: rymndhng/release-on-push-action@master
@@ -20,7 +20,7 @@ jobs:
     name: Upload artifacts
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Package static files
