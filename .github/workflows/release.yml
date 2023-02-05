@@ -5,7 +5,7 @@ on:
       - main
 jobs:
   release:
-    name: Release
+    name: Create release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,6 +23,10 @@ jobs:
           # -o <package you'll use pkger in> -include <loc of static files>
           ./pkger -o db -include /db/migrations
           ./pkger -o web -include /web/html
+  upload:
+    name: Upload artifacts
+    runs-on: ubuntu-latest
+    steps:
       - name: Release x86 Linux
         uses: wangyoucao577/go-release-action@master
         with:
