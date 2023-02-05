@@ -4,9 +4,12 @@ on:
     branches:
       - main
 jobs:
-  release:
+  bump:
     name: Create release
     runs-on: ubuntu-latest
+    outputs:
+      release_tag: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
     steps:
       - uses: actions/checkout@v2
       - uses: rymndhng/release-on-push-action@master
@@ -23,8 +26,8 @@ jobs:
           # -o <package you'll use pkger in> -include <loc of static files>
           ./pkger -o db -include /db/migrations
           ./pkger -o web -include /web/html
-  upload:
-    name: Upload ${{ matrix.name }}
+  build:
+    name: Build ${{ matrix.name }}
     needs: release
     strategy:
       matrix:
@@ -47,10 +50,10 @@ jobs:
       - name: Release
         uses: wangyoucao577/go-release-action@master
         with:
-          release_tag: ${{ steps.release.outputs.tag_name }}
+          release_tag: ${{ needs.release.outputs.tag_name }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goarch: ${{ matrix.goarch }}
           goos: ${{ matrix.goos }}
-          ldflags: -X main.version=${{ steps.release.outputs.version }}
+          ldflags: -X main.version=${{ needs.release.outputs.version }}
           md5sum: false
           sha256sum: true
