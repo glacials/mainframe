@@ -16,7 +16,6 @@ require (
 	github.com/inconshreveable/go-update v0.0.0-20160112193335-8152e7eb6ccf
 	github.com/jayschwa/go-dyndns v0.0.0-20130808202408-c49f6dc440e2
 	github.com/markbates/pkger v0.17.1
-	github.com/mattn/go-sqlite3 v1.14.9
 	github.com/robfig/cron/v3 v3.0.0
 	golang.org/x/oauth2 v0.0.0-20221014153046-6fdb5e3db783
 	google.golang.org/api v0.102.0
@@ -24,4 +23,5 @@ require (
 	gopkg.in/ddo/go-dlog.v2 v2.1.0 // indirect
 	gopkg.in/ddo/pick.v1 v1.2.2 // indirect
 	gopkg.in/ddo/request.v1 v1.4.2 // indirect
+	modernc.org/sqlite v1.20.3 // indirect
 )
