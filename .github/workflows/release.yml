@@ -11,7 +11,7 @@ jobs:
       release_tag: ${{ steps.release.outputs.tag_name }}
       version: ${{ steps.release.outputs.version }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: rymndhng/release-on-push-action@master
         id: release
         with:
@@ -46,7 +46,7 @@ jobs:
             goarch: arm64
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Release
         uses: wangyoucao577/go-release-action@master
         with:
