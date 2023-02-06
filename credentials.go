@@ -121,7 +121,7 @@ func getTokenFromWeb(
 		token.Expiry,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("can't insert token: %v", err)
+		return nil, fmt.Errorf("can't insert token <%s %s %s %s>: %v", token.AccessToken, token.TokenType, token.RefreshToken, token.Expiry, err)
 	}
 
 	id, err := result.LastInsertId()
