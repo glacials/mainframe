@@ -30,7 +30,7 @@ func Run(logger *log.Logger, _ string, db *sql.DB, mux *http.ServeMux, gcpClient
 			err,
 		)
 	}
-	fmt.Println("Upcoming events:")
+	logger.Println("Upcoming events:")
 	if len(events.Items) == 0 {
 		return fmt.Errorf("no upcoming events found")
 	} else {
@@ -39,7 +39,7 @@ func Run(logger *log.Logger, _ string, db *sql.DB, mux *http.ServeMux, gcpClient
 			if date == "" {
 				date = item.Start.Date
 			}
-			fmt.Printf("%v (%v)\n", item.Summary, date)
+			logger.Printf("%v (%v)\n", item.Summary, date)
 		}
 	}
 

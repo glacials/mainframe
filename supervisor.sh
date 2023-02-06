@@ -20,7 +20,7 @@ function boot () {
   done
   TMUX_WINDOW_NAME=mainframe
   tmux new-window -d -n $TMUX_WINDOW_NAME
-  tmux unlink-window -k -t $THROWAWAY_WINDOW_NAME > /dev/null 2>&1 || echo "  No throwaway session to delete"
+  tmux unlink-window -k -t $THROWAWAY_WINDOW_NAME > /dev/null 2>&1 || echo "  Throwaway session: gone"
   tmux send-keys -t $TMUX_WINDOW_NAME mainframe C-m
 
   sleep 2
