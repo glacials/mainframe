@@ -21,7 +21,7 @@ import (
 func New(logger *log.Logger, name string) (*sql.DB, error) {
 	path := fmt.Sprintf("%s.db", name)
 
-	db, err := sql.Open("sqlite3", path)
+	db, err := sql.Open("sqlite", path)
 	if err != nil {
 		return nil, fmt.Errorf("can't open database: %v", err)
 	}

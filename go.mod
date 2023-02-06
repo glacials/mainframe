@@ -25,3 +25,5 @@ require (
 	gopkg.in/ddo/request.v1 v1.4.2 // indirect
 	modernc.org/sqlite v1.20.3
 )
+
+exclude github.com/mattn/go-sqlite3
