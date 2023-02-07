@@ -15,8 +15,8 @@ function boot () {
   tmux new-window -n $THROWAWAY_WINDOW_NAME > /dev/null 2>&1 || echo "  Using existing tmux window: $TMUX_WINDOW_NAME"
   cat .envrc | while read line
   do
-    IFS="=" read key val <<< $line
-    key = ${key#"export "} # Strips prepending "export "
+    IFS=" " read export rest <<< $line # Strip "export " from "export KEY=VAL"
+    IFS="=" read key val <<< $rest
     tmux set-environment -t mainframe $key $val
   done
   TMUX_WINDOW_NAME=mainframe

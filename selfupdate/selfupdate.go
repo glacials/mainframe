@@ -25,7 +25,7 @@ type gitHubVersionResponse struct {
 	TagName string `json:"tag_name"`
 }
 
-// Run runs a self-update if needed.
+// Run self-updates if needed.
 func Run(
 	logger *log.Logger,
 	version string,
