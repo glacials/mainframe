@@ -6,6 +6,15 @@ series of brittle shell scripts and cron jobs.
 
 If you can find some use out of it, great!
 
+## Running
+
+First copy `.envrc.example` to `.envrc` and fill it out. Source it or use [direnv](https://github.com/direnv/direnv) to source it automatically.
+
+```sh
+go build .
+./mainframe
+```
+
 ## Running as a daemon
 
 To run mainframe how it's meant to be run, e.g. on an old machine or Raspberry

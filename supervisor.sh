@@ -16,6 +16,7 @@ function boot () {
   cat .envrc | while read line
   do
     IFS="=" read key val <<< $line
+    key = ${key#"export "} # Strips prepending "export "
     tmux set-environment -t mainframe $key $val
   done
   TMUX_WINDOW_NAME=mainframe

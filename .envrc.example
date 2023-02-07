@@ -1,0 +1,1 @@
+export GCP_CREDENTIALS_FILE=/path/to/gcp-calendar-api-creds.json
