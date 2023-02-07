@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	vision "cloud.google.com/go/vision/apiv1"
 	"golang.org/x/oauth2"
@@ -118,10 +119,10 @@ func getTokenFromWeb(
 		token.AccessToken,
 		token.TokenType,
 		token.RefreshToken,
-		token.Expiry,
+		token.Expiry.Format(time.RFC3339),
 	)
 	if err != nil {
-		return nil, fmt.Errorf("can't insert token <%s %s %s %s>: %v", token.AccessToken, token.TokenType, token.RefreshToken, token.Expiry, err)
+		return nil, fmt.Errorf("can't insert token (type=%s, expiry=%s): %v", token.TokenType, token.Expiry, err)
 	}
 
 	id, err := result.LastInsertId()
