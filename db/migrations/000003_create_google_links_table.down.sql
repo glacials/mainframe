@@ -1,1 +1,1 @@
-DELETE TABLE IF EXISTS google_links;
+DROP TABLE IF EXISTS google_links;
