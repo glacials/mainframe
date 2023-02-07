@@ -5,7 +5,6 @@ on:
 jobs:
   build:
     name: Build ${{ matrix.name }}
-    needs: bump
     strategy:
       matrix:
         include:
