@@ -106,11 +106,13 @@ func Run(
 
 	if lastKnownPublicIP == nil {
 		if row := db.QueryRow(selectIPSQL); row != nil {
-			if err := row.Scan(&lastKnownPublicIP); err != nil {
+			var ipStr string
+			if err := row.Scan(&ipStr); err != nil {
 				if err != sql.ErrNoRows {
 					return fmt.Errorf("can't bring IP from database to memory: %w", err)
 				}
 			}
+			lastKnownPublicIP = net.ParseIP(ipStr)
 		}
 	}
 
@@ -133,6 +135,10 @@ func Run(
 
 	ip, err := client.Update(domain, nil)
 	if err == dyndns.NoChange {
+		if _, err := db.Exec(insertIPSQL, ip.String()); err != nil {
+			return fmt.Errorf("can't insert IP into database: %w", err)
+		}
+
 		lastKnownPublicIP = ip
 		return fmt.Errorf("server says IP is unchanged")
 	}
