@@ -108,6 +108,10 @@ func fetchLatestVersion(logger *log.Logger) (string, error) {
 	client := http.Client{}
 
 	req, err := http.NewRequest("GET", versionURL, nil)
+	if err != nil {
+		return "", fmt.Errorf("can't create new HTTP request: %w", err)
+	}
+
 	req.Header.Add("Accept", "application/json")
 
 	resp, err := client.Do(req)
