@@ -41,7 +41,7 @@ func New(logger *log.Logger, name string) (*sql.DB, error) {
 		driver,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("can't set up migrations: %v", err)
+		return nil, fmt.Errorf("can't set up migrations: %w", err)
 	}
 
 	err = m.Up()
@@ -51,6 +51,10 @@ func New(logger *log.Logger, name string) (*sql.DB, error) {
 		return nil, fmt.Errorf("can't migrate database: %v", err)
 	}
 
-	logger.Printf("database migrated")
+	version, dirty, err := m.Version()
+	if err != nil {
+		return nil, fmt.Errorf("can't get migration version: %w", err)
+	}
+	logger.Printf("Database migrated to %d (dirty=%t)", version, dirty)
 	return db, nil
 }

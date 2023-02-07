@@ -18,10 +18,10 @@ import (
 
 const (
 	selectScopeSQL = `
-	SELECT
-		google_link_id
-	FROM google_link_scopes
-	WHERE scope = $1
+		SELECT
+			google_link_id
+		FROM google_link_scopes
+		WHERE scope = $1
 	`
 	selectLinkSQL = `
 		SELECT
@@ -51,7 +51,7 @@ const (
 		) VALUES (
 			$1, $2
 		)
-		`
+	`
 )
 
 var (

@@ -14,14 +14,31 @@ import (
 	"github.com/jayschwa/go-dyndns"
 )
 
+const (
+	insertIPSQL = `
+		INSERT INTO ip_addresses (
+			ip_address
+		) VALUES (
+			$1
+		)
+	`
+	selectIPSQL = `
+		SELECT
+			ip_address
+		FROM
+			ip_addresses
+		ORDER BY
+			created_at DESC
+		LIMIT 1
+	`
+)
+
 var (
 	domain         = os.Getenv("DYNDNS_DOMAIN")
 	dyndnsServer   = os.Getenv("DYNDNS_SERVER")
 	dyndnsUsername = os.Getenv("DYNDNS_USERNAME")
 	dyndnsPassword = os.Getenv("DYNDNS_PASSWORD")
-)
 
-var (
 	lastKnownPublicIP net.IP = nil
 )
 
@@ -29,7 +46,7 @@ var (
 func Run(
 	logger *log.Logger,
 	version string,
-	_ *sql.DB,
+	db *sql.DB,
 	_ *http.ServeMux,
 	_ *http.Client,
 ) error {
@@ -86,6 +103,17 @@ func Run(
 	json.Unmarshal(body, &localIP)
 
 	localAddr := localIP.Query
+
+	if lastKnownPublicIP == nil {
+		if row := db.QueryRow(selectIPSQL); row != nil {
+			if err := row.Scan(&lastKnownPublicIP); err != nil {
+				if err != sql.ErrNoRows {
+					return fmt.Errorf("can't bring IP from database to memory: %w", err)
+				}
+			}
+		}
+	}
+
 	if localAddr == lastKnownPublicIP.String() {
 		// logger.Printf("IP hasn't changed from %s, so not updating dyndns", lastKnownPublicIP)
 		return nil
@@ -114,6 +142,10 @@ func Run(
 			domain,
 			err,
 		)
+	}
+
+	if _, err := db.Exec(insertIPSQL, ip.String()); err != nil {
+		return fmt.Errorf("can't insert IP into database: %w", err)
 	}
 
 	lastKnownPublicIP = ip
