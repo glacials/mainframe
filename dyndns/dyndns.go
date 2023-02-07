@@ -63,25 +63,23 @@ func Run(
 	// We're not really allowed to update using dyndns if our IP address hasn't
 	// changed, so we need to keep track of it and check our current one before
 	// actually updating Google Domains via dyndns
-	conn, err := net.Dial("udp", "8.8.8.8:80")
-	if err != nil {
-		return fmt.Errorf("can't check current IP: %v", err)
-	}
-	defer conn.Close()
-
 	type IP struct {
 		Query string
 	}
 
 	req, err := http.Get("http://ip-api.com/json/")
 	if err != nil {
-		return fmt.Errorf("can't get external IP: %v", err)
+		return fmt.Errorf("can't get external IP: %w", err)
 	}
-	defer req.Body.Close()
+	defer func() {
+		if err := req.Body.Close(); err != nil {
+			logger.Printf("can't close request body for getting current IP: %w", err)
+		}
+	}()
 
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
-		return fmt.Errorf("can't read external IP: %v", err)
+		return fmt.Errorf("can't read external IP: %w", err)
 	}
 
 	var localIP IP
@@ -112,9 +110,7 @@ func Run(
 	}
 	if err != nil {
 		return fmt.Errorf(
-			"can't update dyndns for %s@%s to %s: %v",
-			dyndnsUsername,
-			dyndnsServer,
+			"can't update DNS for %s: %v",
 			domain,
 			err,
 		)
