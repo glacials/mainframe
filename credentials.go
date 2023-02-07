@@ -7,25 +7,31 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 	"time"
 
 	vision "cloud.google.com/go/vision/apiv1"
+	"github.com/golang-collections/collections/set"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/calendar/v3"
 )
 
 const (
-	selectSQL = `
+	selectScopeSQL = `
+	SELECT
+		google_link_id
+	FROM google_link_scopes
+	WHERE scope = $1
+	`
+	selectLinkSQL = `
 		SELECT
 			access_token,
 			token_type,
 			refresh_token,
 			expires_at
 		FROM google_links
-		WHERE scope = $1
-		ORDER_BY expires_at DESC
+		WHERE id = $1
+		ORDER BY expires_at DESC
 		LIMIT 1
 	`
 	insertLinkSQL = `
@@ -153,20 +159,65 @@ func newClient(
 	mux *http.ServeMux,
 	db *sql.DB,
 ) (*http.Client, error) {
-	row := db.QueryRow(selectSQL, strings.Join(scopes, ","))
+	// Link IDs that will supply all the scopes we need.
+	var validLinks *set.Set
+
+	for _, scope := range scopes {
+		rows, err := db.Query(selectScopeSQL, scope)
+		if err != nil {
+			return nil, fmt.Errorf("can't select scope from database: %w", err)
+		}
+
+		validLinksForThisScope := set.New() // of int
+		for rows.Next() {
+			var linkID int
+			if err := rows.Scan(&linkID); err != nil {
+				return nil, fmt.Errorf("can't scan scope row into struct: %w", err)
+			}
+			validLinksForThisScope.Insert(linkID)
+		}
+
+		if validLinks == nil {
+			validLinks = validLinksForThisScope
+		} else {
+			validLinks = validLinks.Intersection(validLinksForThisScope)
+		}
+	}
+
+	if validLinks.Len() == 0 {
+		return nil, fmt.Errorf("no Google token, or at least none that contains the scopes we need")
+	}
+
+	var linkID int
+	validLinks.Do(func(item interface{}) {
+		if intItem, ok := item.(int); ok {
+			linkID = intItem
+			return
+		}
+		panic("expected an int argument when iterating over Google link set")
+	})
+
+	row := db.QueryRow(selectLinkSQL, linkID)
 
 	token := &oauth2.Token{}
+	var expiry string
 	if err := row.Scan(
 		&token.AccessToken,
 		&token.TokenType,
 		&token.RefreshToken,
-		&token.Expiry,
+		&expiry,
 	); err != nil {
-		if err != nil {
+		if err == sql.ErrNoRows {
 			token, err = getTokenFromWeb(logger, config, mux, db)
 			if err != nil {
-				return nil, fmt.Errorf("can't get token from web: %v", err)
+				return nil, fmt.Errorf("can't get token from web: %w", err)
 			}
+		} else {
+			return nil, fmt.Errorf("can't look up Google link token: %w", err)
+		}
+	} else {
+		if token.Expiry, err = time.Parse(time.RFC3339, expiry); err != nil {
+			return nil, fmt.Errorf("invalid datetime in Google link expires_at column `%s`: %w", expiry, err)
 		}
 	}
 

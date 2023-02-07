@@ -54,7 +54,7 @@ not include any SQLite drivers.
 
 ```sh
 
-migrate -path db/migrations create -seq -ext sql name_of_migration
+migrate create -dir db/migrations -seq -ext sql name_of_migration
 $EDITOR db/migrations/*name_of_migration.{up,down}.sql
 ```
 

@@ -12,6 +12,12 @@ import (
 	"google.golang.org/api/option"
 )
 
+// Run fetches calendar events from Google calendar and outputs a few upcoming ones.
+//
+// This was originally going to be a calendar blocker-outer to allow personal
+// events to block out work calendars, but my need for that feature was removed
+// by other means. This is how far I'd gotten at the time, so I figured I'd keep
+// the progress in case my other solution goes away.
 func Run(logger *log.Logger, _ string, db *sql.DB, mux *http.ServeMux, gcpClient *http.Client) error {
 	logger = log.New(logger.Writer(), "[calendar] ", logger.Flags())
 	ctx := context.Background()
@@ -32,14 +38,14 @@ func Run(logger *log.Logger, _ string, db *sql.DB, mux *http.ServeMux, gcpClient
 	}
 	logger.Println("Upcoming events:")
 	if len(events.Items) == 0 {
-		return fmt.Errorf("no upcoming events found")
+		return fmt.Errorf("  (none)")
 	} else {
 		for _, item := range events.Items {
 			date := item.Start.DateTime
 			if date == "" {
 				date = item.Start.Date
 			}
-			logger.Printf("%v (%v)\n", item.Summary, date)
+			logger.Printf("  %v (%v)\n", item.Summary, date)
 		}
 	}
 

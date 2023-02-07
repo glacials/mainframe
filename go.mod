@@ -11,6 +11,7 @@ require (
 	github.com/ddo/go-spin v0.0.0-20160718105357-ab0a40e623c0 // indirect
 	github.com/ddo/pick-json v0.0.0-20170207095303-c8760e09e0fe // indirect
 	github.com/ddo/rq v0.0.0-20190828174524-b3daa55fcaba // indirect
+	github.com/golang-collections/collections v0.0.0-20130729185459-604e922904d3 // indirect
 	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/google/uuid v1.3.0
 	github.com/inconshreveable/go-update v0.0.0-20160112193335-8152e7eb6ccf
