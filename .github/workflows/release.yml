@@ -26,3 +26,36 @@ jobs:
           # -o <package you'll use pkger in> -include <loc of static files>
           ./pkger -o db -include /db/migrations
           ./pkger -o web -include /web/html
+  # TODO: This is duplicated in build.yml so it still runs when a release is
+  # created in the GitHub UI. Find a way to dedupe.
+  build:
+    name: Build ${{ matrix.name }}
+    needs: bump
+    strategy:
+      matrix:
+        include:
+          - name: Linux x86_64
+            goos: linux
+            goarch: amd64
+          - name: Linux ARM
+            goos: linux
+            goarch: arm
+          - name: macOS Intel
+            goos: darwin
+            goarch: amd64
+          - name: macOS Apple Silicon
+            goos: darwin
+            goarch: arm64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Release
+        uses: wangyoucao577/go-release-action@master
+        with:
+          release_tag: ${{ needs.bump.outputs.tag_name }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          goarch: ${{ matrix.goarch }}
+          goos: ${{ matrix.goos }}
+          ldflags: -X main.version=${{ needs.bump.outputs.version }}
+          md5sum: false
+          sha256sum: true
