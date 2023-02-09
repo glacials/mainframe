@@ -44,10 +44,10 @@ Prerequisites: Install
 go install -tags 'sqlite' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 ```
 
-[`sqlite3`][https://github.com/mattn/go-sqlite3] would probably work too, but is
+[`sqlite3`](https://github.com/mattn/go-sqlite3) would probably work too, but is
 less friendly to cross-compiling.
 
-**WARNING:** Do not install `golang-migrate` from Homebrew, as that version does
+**Warning:** Do not install `golang-migrate` from Homebrew, as that version does
 not include any SQLite drivers.
 
 #### Creating a new migration
