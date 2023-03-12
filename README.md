@@ -15,10 +15,22 @@ go build .
 ./mainframe
 ```
 
+### Developing
+
+When developing, use `gow`:
+
+```sh
+go install github.com/mitranim/gow
+gow run .
+```
+
+This will contnually rebuild and then reboot `mainframe` when a source file
+changes.
+
 ## Running as a daemon
 
-To run mainframe how it's meant to be run, e.g. on an old machine or Raspberry
-Pi in a closet, first install dependencies:
+To run mainframe how it's meant to be run in production, i.e. on an old machine
+or Raspberry Pi in a closet, first install dependencies:
 
 ```sh
 sudo apt-get install moreutils

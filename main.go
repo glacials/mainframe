@@ -4,11 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	_ "twos.dev/mainframe/coldbrewcrew/iworkout"
 	"twos.dev/mainframe/cron"
 	"twos.dev/mainframe/db"
+	"twos.dev/mainframe/pottytrainer"
 	"twos.dev/mainframe/web"
 )
 
@@ -32,7 +34,7 @@ func main() {
 		return
 	}
 
-	logger.Print("Booting mainframe")
+	logger.Printf("Booting mainframe %s", version)
 	db, err := db.New(logger, "mainframe")
 	if err != nil {
 		logger.Fatalf("database error: %v", err)
@@ -46,6 +48,12 @@ func main() {
 	gcpClient, err := newGCPClient(logger, db, mux)
 	if err != nil {
 		logger.Fatalf("gcp client error: %v", err)
+	}
+
+	pottyMux := http.NewServeMux()
+	mux.Handle("/potty/", http.StripPrefix("/potty", pottyMux))
+	if err := pottytrainer.Run(logger, pottyMux); err != nil {
+		logger.Fatalf("potty trainer error: %v", err)
 	}
 
 	if err := cron.Start(logger, db, version, mux, gcpClient); err != nil {

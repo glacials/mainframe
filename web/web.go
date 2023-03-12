@@ -3,13 +3,12 @@ package web
 import (
 	"embed"
 	"fmt"
-	"io/ioutil"
+	"html/template"
+	"io/fs"
 	"log"
 	"net/http"
-	"text/template"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/markbates/pkger"
 	"twos.dev/mainframe/coldbrewcrew/iworkout"
 )
 
@@ -17,6 +16,9 @@ const port = 9000
 
 //go:embed html
 var html embed.FS
+
+//go:embed static
+var static embed.FS
 
 // IworkoutParams are the fields sent to the template which renders
 // html/iworkout.html.
@@ -45,52 +47,28 @@ func Start(logger *log.Logger) (*http.ServeMux, error) {
 	logger = log.New(logger.Writer(), "[web] ", logger.Flags())
 	logger.Println("Booting web")
 
-	dir := http.FileServer(pkger.Dir("/web/html/static"))
-	dir = overrideMIMEType(logger, dir)
-
-	indexFile, err := pkger.Open("/web/html/index.html")
+	htmlfs, err := fs.Sub(html, "html")
 	if err != nil {
-		return nil, fmt.Errorf("can't open index.html: %v", err)
+		return nil, fmt.Errorf("failed to get html subdirectory: %w", err)
 	}
-
-	indexBytes, err := ioutil.ReadAll(indexFile)
-	if err != nil {
-		return nil, fmt.Errorf("can't read index.html: %v", err)
-	}
-
-	indexStr := string(indexBytes)
-	indexTemplate := template.Must(template.New("").Parse(indexStr))
-
-	iworkoutFile, err := pkger.Open("/web/html/iworkout.html")
-	if err != nil {
-		return nil, fmt.Errorf("can't open iworkout.html: %v", err)
-	}
-
-	iworkoutBytes, err := ioutil.ReadAll(iworkoutFile)
-	if err != nil {
-		return nil, fmt.Errorf("can't read iworkout.html: %v", err)
-	}
-
-	iworkoutStr := string(iworkoutBytes)
-	iworkoutTemplate := template.Must(template.New("").Parse(iworkoutStr))
 
 	mux := http.NewServeMux()
-
-	mux.Handle("/static/", http.StripPrefix("/static/", dir))
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		if err := indexTemplate.Execute(w, nil); err != nil {
-			logger.Printf("error executing index template: %v", err)
-		}
-	})
+	mux.Handle("/static/", overrideMIMEType(logger, http.FileServer(http.FS(static))))
+	mux.Handle("/", http.FileServer(http.FS(htmlfs)))
+	t, err := template.ParseFS(htmlfs, "*.tmpl")
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse templates: %w", err)
+	}
 	mux.HandleFunc("/iworkout", func(w http.ResponseWriter, r *http.Request) {
 		params := IworkoutParams{
 			Users:     iworkout.Users(),
 			Messages:  iworkout.Messages(),
 			Reactions: iworkout.Reactions(),
 		}
-		if err := iworkoutTemplate.Execute(w, params); err != nil {
+		if err := t.Lookup("iworkout.html.tmpl").Execute(w, params); err != nil {
 			logger.Printf("error executing iworkout template: %s", err)
 			w.WriteHeader(500)
+			return
 		}
 	})
 

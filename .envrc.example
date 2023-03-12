@@ -1,1 +1,5 @@
 export GCP_CREDENTIALS_FILE=/path/to/gcp-calendar-api-creds.json
+export DYNDNS_DOMAIN=example.com
+export DYNDNS_SERVER=https://domains.google.com/nic/update # For Google Domains
+export DYNDNS_USERNAME=changeme
+export DYNDNS_PASSWORD=change

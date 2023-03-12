@@ -19,6 +19,7 @@ const (
 
 	minutely = "@every 1m"
 	hourly   = "@every 1h"
+	never    = ""
 )
 
 type environment string
@@ -65,7 +66,7 @@ var (
 			name: "speedtest",
 			f:    speedtest.Run,
 			intervals: map[environment]string{
-				development: hourly,
+				development: never,
 				production:  "0 5 * * *",
 			},
 			enabled: true,
