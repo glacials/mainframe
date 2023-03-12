@@ -43,7 +43,7 @@ func overrideMIMEType(logger *log.Logger, h http.Handler) http.Handler {
 
 // Start boots the web server in a goroutine and then immediately returns the
 // root serve mux.
-func Start(logger *log.Logger) (*http.ServeMux, error) {
+func Start(logger *log.Logger, version string) (*http.ServeMux, error) {
 	logger = log.New(logger.Writer(), "[web] ", logger.Flags())
 	logger.Println("Booting web")
 

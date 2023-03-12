@@ -40,7 +40,7 @@ func main() {
 		logger.Fatalf("database error: %v", err)
 	}
 
-	mux, err := web.Start(logger)
+	mux, err := web.Start(logger, version)
 	if err != nil {
 		logger.Fatalf("web error: %v", err)
 	}

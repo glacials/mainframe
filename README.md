@@ -21,7 +21,7 @@ When developing, use `gow`:
 
 ```sh
 go install github.com/mitranim/gow
-gow run .
+gow -e go,html,tmpl,css run .
 ```
 
 This will contnually rebuild and then reboot `mainframe` when a source file
