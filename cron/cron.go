@@ -2,7 +2,6 @@ package cron
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -19,7 +18,7 @@ const (
 
 	minutely = "@every 1m"
 	hourly   = "@every 1h"
-	never    = ""
+	never    = "0 0 5 31 2 ?" // Feb 31 ;)
 )
 
 type environment string
@@ -33,7 +32,7 @@ type cronSpec struct {
 // Cron fields are, in order:
 // second minute hour day-of-month month day-of-week
 var (
-	// 3am reserved for mainframe_helper.sh to boot me back up if I updated
+	// 3am reserved for supervisor.sh to boot me back up if I updated
 	crons = []cronSpec{
 		{
 			name: "calendar",
@@ -48,7 +47,7 @@ var (
 			name: "dyndns",
 			f:    dyndns.Run,
 			intervals: map[environment]string{
-				development: minutely,
+				development: never,
 				production:  "0 * * * *",
 			},
 			enabled: true,
@@ -104,16 +103,6 @@ func Start(
 			}()
 		}
 	}
-
-	if _, err := c.AddFunc(minutely, func() {
-		logger.Printf("Kicking off %s\n", "speedtest")
-		if err := speedtest.Run(logger, version, db, mux, gcpClient); err != nil {
-			logger.Printf("%s failed: %v", "speedtest", err)
-		}
-	}); err != nil {
-		return fmt.Errorf("cannot start speedtest cron: %v", err)
-	}
-	logger.Printf("Registered %s\n", "speedtest")
 
 	logger.Println("All crons registered")
 	c.Start()

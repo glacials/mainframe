@@ -14,16 +14,55 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/calendar/v3"
+	googleoauth "google.golang.org/api/oauth2/v2"
+	"google.golang.org/api/option"
 )
 
 const (
-	selectScopeSQL = `
-		SELECT
-			google_link_id
-		FROM google_link_scopes
-		WHERE scope = $1
+	sqlInsertGoogleLink = `
+		INSERT INTO google_links (
+			access_token,
+			token_type,
+			refresh_token,
+			expires_at
+		) VALUES (
+			$1, $2, $3, $4
+		)
 	`
-	selectLinkSQL = `
+	sqlInsertGoogleLinkScope = `
+		INSERT INTO google_link_scopes (
+			google_link_id,
+			scope
+		) VALUES (
+			$1, $2
+		)
+	`
+	// sqlUpsertGoogleUser inserts a new google user if it doesn't exist, otherwise
+	// updates the existing one.
+	sqlUpsertGoogleUser = `
+	  INSERT INTO google_users (
+		  user_id,
+			google_id,
+			email,
+			verified_email,
+			family_name,
+			given_name,
+			name,
+			picture,
+			gender,
+			hosted_domain,
+			link,
+			locale
+		) VALUES (
+			$1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
+		)
+	`
+	sqlInsertUser = `
+	  INSERT INTO users (
+		) VALUES (
+		)
+	`
+	sqlSelectGoogleLink = `
 		SELECT
 			access_token,
 			token_type,
@@ -34,23 +73,25 @@ const (
 		ORDER BY expires_at DESC
 		LIMIT 1
 	`
-	insertLinkSQL = `
-		INSERT INTO google_links (
-			access_token,
-			token_type,
-			refresh_token,
-			expires_at
-		) VALUES (
-			$1, $2, $3, $4
-		)
+	sqlSelectGoogleLinkScope = `
+		SELECT
+			google_link_id
+		FROM google_link_scopes
+		WHERE scope = $1
 	`
-	insertLinkScopeSQL = `
-		INSERT INTO google_link_scopes (
-			google_link_id,
-			scope
-		) VALUES (
-			$1, $2
-		)
+	sqlSelectGoogleUser = `
+	  SELECT
+		  id
+	  FROM google_users
+		WHERE google_id = $1
+	`
+	// sqlSelectUserByGoogleID selects a user by their Google API ID.
+	sqlSelectUserByGoogleID = `
+	  SELECT
+		  id
+	  FROM users
+		INNER JOIN google_users ON google_users.user_id = users.id
+		WHERE google_users.google_id = $1
 	`
 )
 
@@ -64,11 +105,6 @@ func newGCPClient(logger *log.Logger, db *sql.DB, mux *http.ServeMux) (*http.Cli
 	if gcpEnvVal == "" {
 		return nil, fmt.Errorf("%s is not set", gcpEnvKey)
 	}
-
-	mux.HandleFunc("/links/google/out", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Not yet implemented"))
-		w.WriteHeader(200)
-	})
 
 	b, err := os.ReadFile(gcpEnvVal)
 	if err != nil {
@@ -86,11 +122,65 @@ func newGCPClient(logger *log.Logger, db *sql.DB, mux *http.ServeMux) (*http.Cli
 		return nil, fmt.Errorf("can't get client: %v", err)
 	}
 
+	mux.HandleFunc("/links/google/out", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Location", config.AuthCodeURL("state-token", oauth2.AccessTypeOffline))
+		w.WriteHeader(http.StatusMovedPermanently)
+	})
+
+	mux.HandleFunc("/links/google/in", func(w http.ResponseWriter, r *http.Request) {
+		token, err := config.Exchange(context.Background(), r.URL.Query().Get("code"))
+		if err != nil {
+			logger.Printf("unable to retrieve token from web: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		s, err := googleoauth.NewService(context.TODO(), option.WithAPIKey(token.AccessToken))
+		if err != nil {
+			logger.Printf("unable to create oauth2 service: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		u := googleoauth.NewUserinfoV2Service(s)
+		userinfo, err := u.Me.Get().Do()
+		if err != nil {
+			logger.Printf("unable to get userinfo: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		googleUserRow := db.QueryRowContext(r.Context(), sqlSelectGoogleUser, userinfo.Id)
+		var googleUserID string
+		if googleUserRow.Scan(googleUserID) != nil {
+			logger.Printf("unable to get google user id: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		row := db.QueryRowContext(r.Context(), sqlSelectUserByGoogleID, googleUserID)
+		var userID int
+		if err := row.Scan(userID); err != nil {
+			if err == sql.ErrNoRows {
+				logger.Printf("tried to log in as Google user %s, but no user exists", googleUserID)
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte("no user for that Google account exists; did you mean to register?"))
+				return
+			}
+		}
+
+		if err := upsertGoogleUser(r.Context(), db, userID, userinfo); err != nil {
+			logger.Printf("unable to create google user: %v", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	})
+
 	return client, nil
 }
 
-// Request a token from the web, then returns the retrieved token.
-func getTokenFromWeb(
+// getTokenFromCLIUser asks the user at the comment line to visit a URL, which
+// will give us a token.
+func getTokenFromCLIUser(
 	logger *log.Logger,
 	config *oauth2.Config,
 	mux *http.ServeMux,
@@ -121,7 +211,7 @@ func getTokenFromWeb(
 		log.Fatalf("Unable to retrieve token from web: %v", err)
 	}
 	result, err := db.Exec(
-		insertLinkSQL,
+		sqlInsertGoogleLink,
 		token.AccessToken,
 		token.TokenType,
 		token.RefreshToken,
@@ -141,7 +231,7 @@ func getTokenFromWeb(
 
 	for _, scope := range scopes {
 		if _, err := db.Exec(
-			insertLinkScopeSQL,
+			sqlInsertGoogleLinkScope,
 			id,
 			scope,
 		); err != nil {
@@ -163,7 +253,7 @@ func newClient(
 	var validLinks *set.Set
 
 	for _, scope := range scopes {
-		rows, err := db.Query(selectScopeSQL, scope)
+		rows, err := db.Query(sqlSelectGoogleLinkScope, scope)
 		if err != nil {
 			return nil, fmt.Errorf("can't select scope from database: %w", err)
 		}
@@ -197,7 +287,7 @@ func newClient(
 		panic("expected an int argument when iterating over Google link set")
 	})
 
-	row := db.QueryRow(selectLinkSQL, linkID)
+	row := db.QueryRow(sqlSelectGoogleLink, linkID)
 
 	token := &oauth2.Token{}
 	var expiry string
@@ -208,7 +298,7 @@ func newClient(
 		&expiry,
 	); err != nil {
 		if err == sql.ErrNoRows {
-			token, err = getTokenFromWeb(logger, config, mux, db)
+			token, err = getTokenFromCLIUser(logger, config, mux, db)
 			if err != nil {
 				return nil, fmt.Errorf("can't get token from web: %w", err)
 			}
@@ -222,4 +312,32 @@ func newClient(
 	}
 
 	return config.Client(context.Background(), token), nil
+}
+
+// upsertGoogleUser creates a new user in the database from a Google API user object if
+// it doesn't exist, or updates it if it does. The Google user is identified by the ID
+// in the userinfo object, not the Mainframe-level userID. This means one Mainframe user
+// can have multiple Google users associated with it.
+func upsertGoogleUser(ctx context.Context, db *sql.DB, userID int, userinfo *googleoauth.Userinfo) error {
+	_, err := db.ExecContext(
+		ctx,
+		sqlUpsertGoogleUser,
+		userID,
+		userinfo.Id,
+		userinfo.Email,
+		userinfo.VerifiedEmail,
+		userinfo.FamilyName,
+		userinfo.GivenName,
+		userinfo.Name,
+		userinfo.Picture,
+		userinfo.Gender,
+		userinfo.Hd,
+		userinfo.Link,
+		userinfo.Locale,
+	)
+	if err != nil {
+		return fmt.Errorf("can't insert Google user: %w", err)
+	}
+
+	return nil
 }

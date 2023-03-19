@@ -75,3 +75,11 @@ $EDITOR db/migrations/*name_of_migration.{up,down}.sql
 ```sh
 migrate -path db/migrations -database sqlite://mainframe.db up
 ```
+
+#### Forcing a migration version
+
+If a migration screws up and you need to force it back to a previous version:
+
+```sh
+migrate -path db/migrations -database sqlite://mainframe.db force VERSION
+```

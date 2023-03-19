@@ -72,7 +72,7 @@ func Start(logger *log.Logger, version string) (*http.ServeMux, error) {
 		}
 	})
 
-	logger.Printf("Booted web, listening on http://%s:%d\n", "localhost", port)
+	logger.Printf("Listening on http://%s:%d\n", "localhost", port)
 	go func() {
 		if err := http.ListenAndServe(fmt.Sprintf(":%d", port), mux); err != nil {
 			logger.Printf("server stopped: %v", err)
