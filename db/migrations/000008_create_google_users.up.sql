@@ -1,7 +1,7 @@
 CREATE TABLE google_users (
   id INTEGER PRIMARY KEY ASC AUTOINCREMENT,
   user_id REFERENCES users(id) ON DELETE CASCADE,
-  google_id TEXT NOT NULL UNIQUE,
+  external_id TEXT NOT NULL UNIQUE,
   email TEXT NOT NULL,
   verified_email INTEGER NOT NULL,
   family_name TEXT NOT NULL,
