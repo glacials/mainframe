@@ -1,4 +1,4 @@
-package calendar
+package main
 
 import (
 	"context"
@@ -12,17 +12,18 @@ import (
 	"google.golang.org/api/option"
 )
 
-// Run fetches calendar events from Google calendar and outputs a few upcoming ones.
+// runCalendar fetches calendar events from Google calendar and outputs a few
+// upcoming ones.
 //
 // This was originally going to be a calendar blocker-outer to allow personal
 // events to block out work calendars, but my need for that feature was removed
 // by other means. This is how far I'd gotten at the time, so I figured I'd keep
 // the progress in case my other solution goes away.
-func Run(logger *log.Logger, _ string, db *sql.DB, mux *http.ServeMux, gcpClient *http.Client) error {
+func runCalendar(logger *log.Logger, _ string, db *sql.DB, mux *http.ServeMux, google *googleClient) error {
 	logger = log.New(logger.Writer(), "[calendar] ", logger.Flags())
 	ctx := context.Background()
 
-	srv, err := calendar.NewService(ctx, option.WithHTTPClient(gcpClient))
+	srv, err := calendar.NewService(ctx, option.WithHTTPClient(google.http))
 	if err != nil {
 		return fmt.Errorf("unable to retrieve calendar client: %v", err)
 	}

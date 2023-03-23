@@ -8,7 +8,6 @@ import (
 	"os"
 
 	_ "twos.dev/mainframe/coldbrewcrew/iworkout"
-	"twos.dev/mainframe/cron"
 	"twos.dev/mainframe/db"
 	"twos.dev/mainframe/pottytrainer"
 	"twos.dev/mainframe/web"
@@ -45,7 +44,7 @@ func main() {
 		logger.Fatalf("web error: %v", err)
 	}
 
-	gcpClient, err := newGCPClient(logger, db, mux)
+	google, err := newGoogleClient(logger, db, mux)
 	if err != nil {
 		logger.Fatalf("gcp client error: %v", err)
 	}
@@ -56,7 +55,7 @@ func main() {
 		logger.Fatalf("potty trainer error: %v", err)
 	}
 
-	if err := cron.Start(logger, db, version, mux, gcpClient); err != nil {
+	if err := startCron(logger, db, version, mux, google); err != nil {
 		logger.Fatalf("cron error: %v", err)
 	}
 

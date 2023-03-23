@@ -1,4 +1,4 @@
-package dyndns
+package main
 
 import (
 	"database/sql"
@@ -42,13 +42,13 @@ var (
 	lastKnownPublicIP net.IP = nil
 )
 
-// Run updates Google Domains with our current IPu.
-func Run(
+// runDyndns updates Google Domains with our current IPu.
+func runDynDNS(
 	logger *log.Logger,
 	version string,
 	db *sql.DB,
 	_ *http.ServeMux,
-	_ *http.Client,
+	_ *googleClient,
 ) error {
 	logger = log.New(logger.Writer(), "[dyndns] ", logger.Flags())
 

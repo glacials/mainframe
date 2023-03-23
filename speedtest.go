@@ -1,4 +1,4 @@
-package speedtest
+package main
 
 import (
 	"database/sql"
@@ -22,8 +22,8 @@ const insertSQL = `
   );
 `
 
-// Run runs a speedtest and records the results.
-func Run(logger *log.Logger, _ string, db *sql.DB, _ *http.ServeMux, _ *http.Client) error {
+// Run runs a speed test and records the results.
+func runSpeedTest(logger *log.Logger, _ string, db *sql.DB, _ *http.ServeMux, _ *googleClient) error {
 	logger = log.New(logger.Writer(), "[speedtest] ", logger.Flags())
 	logger.Println("Starting test")
 

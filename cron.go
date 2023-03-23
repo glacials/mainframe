@@ -1,4 +1,4 @@
-package cron
+package main
 
 import (
 	"database/sql"
@@ -6,10 +6,6 @@ import (
 	"net/http"
 
 	"github.com/robfig/cron/v3"
-	"twos.dev/mainframe/calendar"
-	"twos.dev/mainframe/dyndns"
-	"twos.dev/mainframe/selfupdate"
-	"twos.dev/mainframe/speedtest"
 )
 
 const (
@@ -24,7 +20,7 @@ const (
 type environment string
 type cronSpec struct {
 	name      string
-	f         func(*log.Logger, string, *sql.DB, *http.ServeMux, *http.Client) error
+	f         func(*log.Logger, string, *sql.DB, *http.ServeMux, *googleClient) error
 	intervals map[environment]string
 	enabled   bool
 }
@@ -36,7 +32,7 @@ var (
 	crons = []cronSpec{
 		{
 			name: "calendar",
-			f:    calendar.Run,
+			f:    runCalendar,
 			intervals: map[environment]string{
 				development: minutely,
 				production:  "0 0 * * *",
@@ -45,7 +41,7 @@ var (
 		},
 		{
 			name: "dyndns",
-			f:    dyndns.Run,
+			f:    runDynDNS,
 			intervals: map[environment]string{
 				development: never,
 				production:  "0 * * * *",
@@ -54,7 +50,7 @@ var (
 		},
 		{
 			name: "selfupdate",
-			f:    selfupdate.Run,
+			f:    runSelfUpdate,
 			intervals: map[environment]string{
 				development: minutely,
 				production:  "0 2 * * *",
@@ -63,7 +59,7 @@ var (
 		},
 		{
 			name: "speedtest",
-			f:    speedtest.Run,
+			f:    runSpeedTest,
 			intervals: map[environment]string{
 				development: never,
 				production:  "0 5 * * *",
@@ -74,12 +70,12 @@ var (
 )
 
 // Start kicks off all various jobs that should be run occasionally.
-func Start(
+func startCron(
 	logger *log.Logger,
 	db *sql.DB,
 	version string,
 	mux *http.ServeMux,
-	gcpClient *http.Client,
+	google *googleClient,
 ) error {
 	logger = log.New(logger.Writer(), "[cron] ", logger.Flags())
 	environment := development
@@ -97,7 +93,7 @@ func Start(
 			f := cronDef.f
 			name := cronDef.name
 			go func() {
-				if err := f(logger, version, db, mux, gcpClient); err != nil {
+				if err := f(logger, version, db, mux, google); err != nil {
 					logger.Printf("%s failed: %v", name, err)
 				}
 			}()

@@ -1,4 +1,4 @@
-package selfupdate
+package main
 
 import (
 	"archive/tar"
@@ -26,12 +26,12 @@ type gitHubVersionResponse struct {
 }
 
 // Run self-updates if needed.
-func Run(
+func runSelfUpdate(
 	logger *log.Logger,
 	version string,
 	_ *sql.DB,
 	_ *http.ServeMux,
-	_ *http.Client,
+	_ *googleClient,
 ) error {
 	logger = log.New(logger.Writer(), "[selfupdate] ", logger.Flags())
 
