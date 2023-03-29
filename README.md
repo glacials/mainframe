@@ -6,22 +6,23 @@ series of brittle shell scripts and cron jobs.
 
 If you can find some use out of it, great!
 
-## Running
+## Running for development
 
-First copy `.envrc.example` to `.envrc` and fill it out. Source it or use [direnv](https://github.com/direnv/direnv) to source it automatically.
+### Prerequisites
 
-```sh
-go build .
-./mainframe
-```
+- [Go](https://golang.org/) 1.19+
+- [`just`](https://github.com/casey/just) (`brew install just`)
+- [`gow`](https://github.com/mitranim/gow) (`go install github.com/mitranim/gow`)
 
 ### Developing
 
-When developing, use `gow`:
+First copy `.envrc.example` to `.envrc` and fill it out. Source it or use
+[direnv](https://github.com/direnv/direnv) to source it automatically.
+
+Then to develop, run:
 
 ```sh
-go install github.com/mitranim/gow
-gow -e go,html,tmpl,css run .
+just serve
 ```
 
 This will contnually rebuild and then reboot `mainframe` when a source file
@@ -62,24 +63,25 @@ less friendly to cross-compiling.
 **Warning:** Do not install `golang-migrate` from Homebrew, as that version does
 not include any SQLite drivers.
 
-#### Creating a new migration
-
-```sh
-
-migrate create -dir db/migrations -seq -ext sql name_of_migration
-$EDITOR db/migrations/*name_of_migration.{up,down}.sql
-```
-
 #### Running migrations
 
 ```sh
 migrate -path db/migrations -database sqlite://mainframe.db up
 ```
 
-#### Forcing a migration version
-
-If a migration screws up and you need to force it back to a previous version:
+#### Creating a new migration
 
 ```sh
-migrate -path db/migrations -database sqlite://mainframe.db force VERSION
+just create-migration NAME
+$EDITOR db/migrations/*name_of_migration.{up,down}.sql
+```
+
+#### Forcing a migration version
+
+If a migration errors, you may have to force the migration engine back to the previous
+version, possibly undoing any partial steps manually. Forcing a migration version does
+not run any migration files.
+
+```sh
+just force-migration VERSION
 ```
