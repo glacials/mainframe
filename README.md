@@ -22,7 +22,7 @@ First copy `.envrc.example` to `.envrc` and fill it out. Source it or use
 Then to develop, run:
 
 ```sh
-just serve
+just run
 ```
 
 This will contnually rebuild and then reboot `mainframe` when a source file

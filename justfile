@@ -1,13 +1,16 @@
 set positional-arguments
 
-serve:
+default:
+  @just --list
+
+run:
   gow -e go,html,tmpl,css run .
 
 migrate:
   migrate -path db/migrations -database sqlite://mainframe.db up
 
-create-migration:
-  migrate create -dir db/migrations -seq -ext sql $0
+create-migration name:
+  migrate create -dir db/migrations -seq -ext sql {{name}}
 
-force-migration:
-  migrate -path db/migrations -database sqlite://mainframe.db force $0
+force-migration version:
+  migrate -path db/migrations -database sqlite://mainframe.db force {{version}}
